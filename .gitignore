@@ -3,3 +3,10 @@
 *.gif
 *.m~
 *.asv
+*.mat
+References/
+*.hdf5
+Scratch/
+TMPLINEDATA/
+TMPMTCHDDATA/
+TMPPSDDATA/

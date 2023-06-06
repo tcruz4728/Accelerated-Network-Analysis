@@ -1,0 +1,5 @@
+{
+"type": "tau",
+"maxSteps": 10,
+"nRuns": 4
+}
