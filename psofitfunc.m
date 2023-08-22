@@ -1,4 +1,4 @@
-function [fitVal,varargout] = psofitfunc(xVec,params)
+function [fitVal,varargout] = psofitfunc(xVec,type,params)
 
 
 %rows: points
@@ -19,13 +19,13 @@ for lpc = 1:nVecs
     % Only the body of this block should be replaced for different fitness
     % functions
         x = xVec(lpc,:);
-        [fitVal(lpc), max_index] = mfqc(x, params);
+        [fitVal(lpc), max_index] = mfqc([x,type], params);
     end
 end
 
 %Return max_index if requested
 if nargout > 1
-    varargout{1} = xVec;
+    varargout{1} = [xVec,type];
     varargout{2}=max_index;
 end
 

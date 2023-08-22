@@ -4,9 +4,12 @@
 *.m~
 *.asv
 *.mat
+*.fig
+*.txt
 References/
 *.hdf5
 Scratch/
 TMPLINEDATA/
 TMPMTCHDDATA/
-TMPPSDDATA/
+
+

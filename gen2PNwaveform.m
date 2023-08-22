@@ -1,9 +1,12 @@
-function wave = gen2PNwaveform(fpos, ta, phase, fmin, fmax,m1, m2,datalen,initial_phase,snr,N,avec, normfac)
+% function wave = gen2PNwaveform_tau(fpos, ta, phase, fmin, fmax,tau0, tau1p5,
+% 4datalen,initial_phase,snr,N, avec, normfac)
 %Returns normalized phase vector of waveform in the Fourier Domain
+function wave = gen2PNwaveform(inParams,ta,phase,gwCoefs,snr)
+fwavepos = waveform(inParams,ta,phase,gwCoefs);
 
-fwavepos = waveform(fpos,ta,phase,fmin,fmax,m1,m2,datalen,initial_phase, avec);
+% fwavepos = waveform_tau(fpos,ta,phase,fmin,fmax,tau0,tau1p5,datalen,initial_phase, avec);
 
-if mod(N,2) == 0
+if mod(inParams.N,2) == 0
     fwaveneg = conj(fwavepos(end-1:-1:2));
 else
     fwaveneg = conj(fwavepos(end:-1:2));
@@ -11,6 +14,8 @@ end
 
 fwave = [fwavepos, fwaveneg];
 
-wave = snr*normfac*fwave;
+wave = snr*inParams.normfac*fwave;
+
+
 
 
