@@ -16,9 +16,9 @@ filepaths.end = [jobParams.path2project,filesep,'TMPMTCHDDATA',filesep,date,file
 outDir = [jobParams.outDir,filesep,date,filesep];
 
 %[Optional] UID Folder Creation and output file directory update
-% if isempty(userUID)
+if isempty(userUID)
     userUID = input("Type UID value: ");
-% end
+end
 
 % Data Folder creation
 cd(jobParams.path2project)
