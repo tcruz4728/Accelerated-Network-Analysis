@@ -25,7 +25,7 @@ function varargout = load_mtchdfltrdata(jobParamsFile,varargin)
 
 %% Default Parameters
 jobParams = loadjson(jobParamsFile);
-strtFreq = 15; % Low Frequency cutoff, or starting frequency
+strtFreq = 30; % Low Frequency cutoff, or starting frequency
 endFreq = 900; % High Frequency cutoff, or ending frequency
 % winLenFac = 4; %Window length factor, winLen = winLenFac*sampFreq;
 % filtordr = 30; %Filter order for highpass filter

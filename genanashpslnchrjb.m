@@ -55,17 +55,19 @@ end
 
 %Add path to jsonlab
 addpath(path2jsonlab);
-anadpfc;
+
 %Load job parameters
 jobParams = loadjson(jobParamsFile);
-
-%Read job name: it will be used for output file names
-jobName = jobParams.jobName;
-
 %ALINE and DRASE function and JSON load
 % addpath(genpath(jobParams.path2project));
 addpath(genpath(jobParams.path2drase));
 addpath(genpath(jobParams.path2shapes));
+
+%Read job name: it will be used for output file names
+jobName = jobParams.jobName;
+
+%Defining Path and Folder Creation
+anadpfc;
 
 % genDataParams = loadjson(jobParams.genDataParamsjson);
 % draseParams = loadjson(jobParams.draseParamsjson);
