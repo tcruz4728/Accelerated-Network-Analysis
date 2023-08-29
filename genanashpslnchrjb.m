@@ -59,7 +59,7 @@ addpath(path2jsonlab);
 %Load job parameters
 jobParams = loadjson(jobParamsFile);
 %ALINE and DRASE function and JSON load
-% addpath(genpath(jobParams.path2project));
+addpath(genpath(jobParams.path2project));
 addpath(genpath(jobParams.path2drase));
 addpath(genpath(jobParams.path2shapes));
 
