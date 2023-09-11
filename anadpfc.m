@@ -6,7 +6,7 @@
 %Folder Pathing
 % filepaths.root = 'C:\Users\Thomas Cruz\Documents\GitHub';
 % jobParamsFile = [filepaths.root,'\Accelerated-Network-Analysis\JSON\PCmtchdfltrtest_Job_params.json'];
-addpath(["JSON",filesep])
+addpath(['JSON',filesep])
 jobParams = loadjson(jobParamsFile);
 % setpath(jobParamsFile);
 
