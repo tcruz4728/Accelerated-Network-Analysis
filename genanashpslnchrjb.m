@@ -67,7 +67,9 @@ addpath(genpath(jobParams.path2shapes));
 jobName = jobParams.jobName;
 
 %Defining Path and Folder Creation
-anadpfc;
+[outDir,~] = dpfc(jobParams,userUID);
+paramsFile = [outDir,'params'];
+paramsFileshps = [paramsFile,'shps'];
 
 % genDataParams = loadjson(jobParams.genDataParamsjson);
 % draseParams = loadjson(jobParams.draseParamsjson);
@@ -93,7 +95,7 @@ params = gwpsoparams(jobParamsFile,paramsFile);
 copyfile([paramsFile,'.mat'],[paramsFileshps,'.mat']);
 
 outData = load_mtchdfltrdata(jobParamsFile);
-run_test_drase4lines(jobParams.drasejobParamsFile,userUID);
+run_test_drase4lines(jobParams,userUID);
 createPSD(outData.PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.outFilePSD);
 load(jobParams.inFileshpsPSD,"PSD")
 createPSD(PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.outFileshpsPSD);

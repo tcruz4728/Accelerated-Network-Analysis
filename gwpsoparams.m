@@ -25,7 +25,7 @@ else
 end
 
 % Constants
-c = 3*10^8; %Speed of light in m/s
+c = 299792458; %Speed of light in m/s
 Msolar = 1.989*10^30; %Solar mass in kg
 G = 6.6743*10^-11; %Gravitional constant in m^3/(kg*s^2)
 

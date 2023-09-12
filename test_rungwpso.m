@@ -1,11 +1,16 @@
 % rungwpso test script
-% clearvars
-% close all
-
-%Defines paths and creates folders for day's runs
-% addpath("References\")
+%Set UID for particular run or to overwrite a previous run
+% if isempty(userUID)
+    userUID = input("Type UID value: ");
+% end
+%Job File 
 jobParamsFile = 'C:\Users\Thomas Cruz\Documents\GitHub\Accelerated-Network-Analysis\JSON\PCmtchdfltrtest_Job_params.json';
-anadpfc;
+jobParams = loadjson(jobParamsFile);
+%Defines paths and creates folders for day's runs
+addpath(jobParams.path2drase)
+[outDir,filepaths] = dpfc(jobParams,userUID);
+paramsFile = [outDir,'params'];
+paramsFileshps = [paramsFile,'shps'];
 
 fidprog = fopen([outDir,'progress.txt'],'a');
 fprintf(fidprog,'%s\n',datestr(datetime('now')));
@@ -43,7 +48,7 @@ title('PSD of Training Segment')
 saveas(gcf,[filepaths.figs,'Training_PSD']);
 
 %% Run SHAPES on pwelch PSD
-run_test_drase4lines(outDir,userUID);
+run_test_drase4lines(jobParams,userUID);
 fprintf(fidprog,'\nDrase Run...done');
 
 %% Interpolation
