@@ -95,7 +95,7 @@ params = gwpsoparams(jobParamsFile,paramsFile);
 copyfile([paramsFile,'.mat'],[paramsFileshps,'.mat']);
 
 outData = load_mtchdfltrdata(jobParamsFile);
-run_test_drase4lines(jobParams,userUID);
+% run_test_drase4lines(jobParams,userUID);
 createPSD(outData.PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.outFilePSD);
 load(jobParams.inFileshpsPSD,"PSD")
 createPSD(PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.outFileshpsPSD);

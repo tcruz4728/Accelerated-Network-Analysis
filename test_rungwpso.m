@@ -8,6 +8,7 @@ jobParamsFile = 'C:\Users\Thomas Cruz\Documents\GitHub\Accelerated-Network-Analy
 jobParams = loadjson(jobParamsFile);
 %Defines paths and creates folders for day's runs
 addpath(jobParams.path2drase)
+setpath(jobParamsFile)
 [outDir,filepaths] = dpfc(jobParams,userUID);
 paramsFile = [outDir,'params'];
 paramsFileshps = [paramsFile,'shps'];

@@ -10,7 +10,6 @@
 "inFileshpsPSD":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/inshpsPSD.mat",
 "outFilePSD":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/PSD.mat",
 "outFileshpsPSD":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/shpsPSD.mat",
-"inFile":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/PSD_data.mat",
 "outDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
 "scrtchDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
 "psoParamsjson":"pso.json",

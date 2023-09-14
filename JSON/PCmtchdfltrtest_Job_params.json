@@ -10,7 +10,6 @@
 "inFileshpsPSD":"TMPPSDDATA/inshpsPSD.mat",
 "outFilePSD":"TMPPSDDATA/PSD.mat",
 "outFileshpsPSD":"TMPPSDDATA/shpsPSD.mat",
-"inFile":"/Users/Thomas Cruz/Documents/GitHub/Accelerated-Network-Analysis/TMPPSDDATA/PSD_data.mat",
 "outDir":"SCRATCH",
 "scrtchDir":"SCRATCH",
 "psoParamsjson":"pso.json",
