@@ -19,6 +19,6 @@
 "jbTime": 8,
 "nNodes": 1,
 "nJbsPerNode": 2,
-"qType":"vm-small",
+"qType":"normal",
 "email":"thomas.cruz03@utrgv.edu"
   }
