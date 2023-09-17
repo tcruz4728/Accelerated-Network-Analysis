@@ -17,8 +17,8 @@
 "injSig":1,
 "accessctrl":"sep",
 "jbTime": 8,
-"nNodes": 2,
-"nJbsPerNode": 1,
+"nNodes": 1,
+"nJbsPerNode": 2,
 "qType":"vm-small",
 "email":"thomas.cruz03@utrgv.edu"
   }
