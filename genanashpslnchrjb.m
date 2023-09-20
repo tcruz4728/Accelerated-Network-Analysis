@@ -139,11 +139,11 @@ for nCount = 1:2
     switch nCount
         case 1
             fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
-                paramsFile,outdataFilePrfx); %pwelch ')
+                [paramsFile,'.mat'],outdataFilePrfx); %pwelch ')
             fprintf(fidOutFileList,'%s\n',outdataFilePrfx);
         case 2
             fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
-                paramsFileshps,[outdataFilePrfx,'shps_']); %pwelch ')
+                [paramsFileshps,'.mat'],[outdataFilePrfx,'shps_']); %pwelch ')
             fprintf(fidOutFileList,'%s\n',[outdataFilePrfx,'shps_']);
     end
 %     Count number of jobs
