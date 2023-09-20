@@ -132,7 +132,7 @@ for nCount = 1:2
     %path to DRASE
     fprintf(fidJbFile,' addpath ''%s''; ', jobParams.path2drase);
     %path to SHAPES, PSO, and project
-    %     fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
+    fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
     %Call drasesetup which sets up parameters for drase run
     %     fprintf(fidJbFile,' rungwpsosetup(''%s'', ''%s'');" \n', ...
     %         paramsFile,outdataFilePrfx);
