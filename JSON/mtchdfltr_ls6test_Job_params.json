@@ -5,7 +5,7 @@
 "path2pso":"/work/08302/tcruz/SDMBIGDAT19/CODES",
 "path2shapes":"/work/08302/tcruz/SHAPES-tcruz",
 "drasejobParamsFile":"/work/08302/tcruz/DRASE/JSON/linetest_Job_params.json",
-"inFileData":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/H-H1_GWOSC_O3b_4KHZ_R1-1267511296-4096.hdf5",
+"inFileData":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/test1_256s_inj138_fs4096.mat",
 "inFilePSD":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/pwPSD.mat",
 "inFileshpsPSD":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/inshpsPSD.mat",
 "outFilePSD":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/PSD.mat",
