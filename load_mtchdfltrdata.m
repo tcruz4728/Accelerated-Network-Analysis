@@ -51,11 +51,17 @@ end
 %Data is assumed to be unwhitened time series strain data from a GW
 %detector in .hdf5 file format. extracting the strain data, sampling
 %frequency and time interval between data points.
+[~,~,fileExt] = fileparts(jobParams.inFileData);
+switch lower(fileExt)
+    case '.hdf5'
 dataY = h5read(jobParams.inFileData,'/strain/Strain')';
-% fileInfo = h5info(jobParams.inFileData);
-% nSamples = fileInfo.Groups(3).Datasets.Attributes(1).Value;
 nSamples = double(h5readatt(jobParams.inFileData,'/strain/Strain','Npoints'));
 tIntrvl = double(h5readatt(jobParams.inFileData,'/strain/Strain','Xspacing')); %Time Interval
+    case '.mat'
+        load(jobParams.inFileData,'dataY','tIntrvl');
+        nSamples = length(dataY);
+end
+
 tlen = nSamples*tIntrvl;
 %%%%%%% TEMP RUN WITH NOISE SAMPLE
 % load(jobParams.inFileData,'strain');

@@ -5,7 +5,7 @@
 "path2pso":"/Users/Thomas Cruz/Documents/GitHub/SDMBIGDAT19/CODES",
 "path2shapes":"/Users/Thomas Cruz/Documents/GitHub/SHAPES-tcruz",
 "drasejobParamsFile":"/Users/Thomas Cruz/Documents/Github/DRASE/References/PClinetest_Job_params.json",
-"inFileData":"TMPPSDDATA/H-H1_GWOSC_O3b_4KHZ_R1-1267511296-4096.hdf5",
+"inFileData":"TMPPSDDATA/test1_256s_inj138_fs4096.mat",
 "inFilePSD":"TMPPSDDATA/pwPSD.mat",
 "inFileshpsPSD":"TMPPSDDATA/inshpsPSD.mat",
 "outFilePSD":"TMPPSDDATA/PSD.mat",

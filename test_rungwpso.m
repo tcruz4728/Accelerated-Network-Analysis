@@ -74,6 +74,9 @@ fprintf(fidprog,'\nGW PSO Runs...done');
 load([outdataFilePrfx,'C'])
 % load(paramsFile,"gwCoefs")
 gwCoefs = params.gwCoefs;
+psoParams = params.pso;
+signalParams = params.signal;
+
 figure;
 hold on;
 plot(params.dataX,params.dataY,'.');
@@ -81,7 +84,7 @@ plot(params.dataX,params.dataY,'.');
 plot(params.dataX,outStruct.bestSig,'Color',[76,153,0]/255,'LineWidth',2.0);
 legend('Data','Signal',...
         'Estimated signal: Best run');
-saveas(gcf,[filepaths.figs,'PSO_Results']);
+% saveas(gcf,[filepaths.figs,'PSO_Results']);
 hold off;
 
 figure;
@@ -94,7 +97,7 @@ title("Best Fitness Values for All Runs");
 xlabel("Iteration");
 ylabel("Best Fitness Value");
 legend;
-saveas(gcf,[filepaths.figs,'Best_fit']);
+% saveas(gcf,[filepaths.figs,'Best_fit']);
 hold off;
 
 figure;

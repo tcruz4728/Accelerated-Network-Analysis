@@ -11,5 +11,6 @@ References/
 Scratch/
 TMPLINEDATA/
 TMPMTCHDDATA/
+TMPPSDDATA/*.m
 Misc/
 crcbgwpso_tau.m
