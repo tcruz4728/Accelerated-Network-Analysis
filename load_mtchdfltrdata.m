@@ -1,4 +1,4 @@
-function varargout = load_mtchdfltrdata(jobParamsFile,varargin)
+function varargout = load_mtchdfltrdata(inFileData,inFilePSD,varargin)
 % Function to load LIGO time series (read a hdf5 file) for use with matched
 % filtering.
 % LOAD_MTCHDFLTRDATA(F)
@@ -24,14 +24,14 @@ function varargout = load_mtchdfltrdata(jobParamsFile,varargin)
 %Thomas Cruz, May 2023
 
 %% Default Parameters
-jobParams = loadjson(jobParamsFile);
+% jobParams = loadjson(jobParamsFile);
 strtFreq = 30; % Low Frequency cutoff, or starting frequency
 endFreq = 900; % High Frequency cutoff, or ending frequency
 % winLenFac = 4; %Window length factor, winLen = winLenFac*sampFreq;
 % filtordr = 30; %Filter order for highpass filter
 
 %Override default parameters if given
-nreqArgs = 1;
+nreqArgs = 2;
 for lpargs = 1:(nargin-nreqArgs)
     if ~isempty(varargin{lpargs})
         switch lpargs
@@ -47,29 +47,22 @@ for lpargs = 1:(nargin-nreqArgs)
     end
 end
 
-%% Load LIGO HDF5 File strain data
+%% Load LIGO .hdf5 File strain data or generated .mat data
 %Data is assumed to be unwhitened time series strain data from a GW
 %detector in .hdf5 file format. extracting the strain data, sampling
 %frequency and time interval between data points.
-[~,~,fileExt] = fileparts(jobParams.inFileData);
+[~,~,fileExt] = fileparts(inFileData);
 switch lower(fileExt)
     case '.hdf5'
-dataY = h5read(jobParams.inFileData,'/strain/Strain')';
-nSamples = double(h5readatt(jobParams.inFileData,'/strain/Strain','Npoints'));
-tIntrvl = double(h5readatt(jobParams.inFileData,'/strain/Strain','Xspacing')); %Time Interval
+        dataY = h5read(inFileData,'/strain/Strain')';
+        nSamples = double(h5readatt(inFileData,'/strain/Strain','Npoints'));
+        tIntrvl = double(h5readatt(inFileData,'/strain/Strain','Xspacing')); %Time Interval
     case '.mat'
-        load(jobParams.inFileData,'dataY','tIntrvl');
+        load(inFileData,'dataY','tIntrvl');
         nSamples = length(dataY);
 end
 
 tlen = nSamples*tIntrvl;
-%%%%%%% TEMP RUN WITH NOISE SAMPLE
-% load(jobParams.inFileData,'strain');
-% dataY = strain;
-% nSamples = length(dataY);
-% tIntrvl = 1/4096;
-% tlen = nSamples*tIntrvl;
-%%%%%%%
 sampFreq = 1/tIntrvl;
 
 sampFreq = double(sampFreq); %Converts to double from int64
@@ -107,5 +100,5 @@ outData = struct('PSD',PSD,'freqVec',freqVec, ...
     'tseriestrainSeg',tseriestrainSeg);
 varargout{1} = outData;
 
-save(jobParams.inFilePSD,"PSD","freqVec","dataY","sampFreq",'freqBnd','tlen')
+save(inFilePSD,"PSD","freqVec","dataY","sampFreq",'freqBnd','tlen')
 

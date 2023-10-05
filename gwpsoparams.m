@@ -1,11 +1,11 @@
 % rungwpso setup script
-function varargout = gwpsoparams(jobParamsFile,outFileName)
+function varargout = gwpsoparams(psoParams,signalParams,outFileName)
 % Read JSON Files 
-jobParams = loadjson(jobParamsFile);
-psoParams = loadjson(jobParams.psoParamsjson);
+% jobParams = loadjson(jobParamsFile);
+% psoParams = loadjson(jobParams.psoParamsjson);
 
 % if jobParams.injSig == 1
-    signalParams = loadjson(jobParams.signalParamsjson);
+%     signalParams = loadjson(jobParams.signalParamsjson);
 % end
 
 % Parameter Structure

@@ -15,11 +15,11 @@ fvec = (0:(kNyq))*sampFreq/nSamples;
 % n = winLen*sampFreq; %Number of samples per window
 % freqs = (0:n)*(1/(2*winLen));
 logPSD = log10(inPSD);
-loginterPSD = interp1(freqVec, logPSD, fvec);
+loginterpPSD = interp1(freqVec, logPSD, fvec);
 
 % %% Antilog
-PSD = (10.^loginterPSD);
+interpPSD = (10.^loginterpPSD);
 
-varargout{1} = PSD;
-save(outFileName,"PSD","sampFreq")
+varargout{1} = interpPSD;
+save(outFileName,"interpPSD",'-append')
 end
