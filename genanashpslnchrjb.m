@@ -58,7 +58,7 @@ jobParams = loadjson(jobParamsFile);
 
 %Optionals for ana_basics setup
 if ~isempty(varargin{1})
-    userUID = varargin{1};
+    userUID = varargin{1}
 end
 % progCtrl = 1; % Always set to on for debugging
 
@@ -95,7 +95,7 @@ for nCount = 1:3
     %         paramsFile,outdataFilePrfx);
     switch nCount
         case 1
-            fprintf(fid, ' [~,~]=ana_basics(''%s'',''%s'',[],[],1,[]);" \n', ...
+            fprintf(fid, ' [~,~]=ana_basics(''%s'',''%s'',[],[],1);" \n', ...
                 jobParamsFile,userUID);
             fprintf(fidOutFileList,'%s\n',paramsFile);
         case 2
