@@ -104,7 +104,7 @@ original_fitVal = -1*mfqc([gwCoefs, 2], params);
 % %     original_fitVal = -1*mfqc([m1, m2, 1], params);
 % %     outStruct = crcbqcpso_mass(params,psoParams,nRuns,sampFreq);
 % end
-outStruct = crcbgwpso(params,psoParams);
+outStruct = crcbgwpso(params,psoParams,2);
 bestFitVal = -1*outStruct.bestFitness;
 %% Optional: Uncomment to save output of PSO in a .mat file
 save(outFileName,'outStruct','bestFitVal',"original_fitVal",'params');

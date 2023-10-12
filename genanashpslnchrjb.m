@@ -63,37 +63,47 @@ end
 % progCtrl = 1; % Always set to on for debugging
 
 %% ANA prep package
-[paramsFile,outdataFilePrfx] = ana_basics(jobParams,userUID,[],[],1,[]);
+[paramsFile,outdataFilePrfx] = ana_basics(jobParams,userUID,[],1);
 dataFile = [outdataFilePrfx,'C'];
 shpsDataFile = [outdataFilePrfx,'shps_C'];
 paramsFileshps = [paramsFile,'shps'];
 
 %% Constuct job file for Launcher
 fidJbFile = fopen([jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfile.txt'],'w');
-
+anabasicsstr = [jobParams.jobName,'anasetup'];
+fidbasicsJbFile = fopen([jobParams.scrtchDir,filesep,anabasicsstr,'_jbfile.txt'],'w');
 %Store list of output files in .txt file for post-processing codes
 fidOutFileList = fopen([outdataFilePrfx,'outFilesList.txt'],'w');
 
+
 nJobs = 1;
-for nCount = 1:2
+for nCount = 1:3
+    fid = fidJbFile;
+    if nCount == 1
+        fid = fidbasicsJbFile;
+    end
     %  PSO and drase command on input file.
-    fprintf(fidJbFile,'matlab -batch ');
+    fprintf(fid,'matlab -batch ');
     %path to jsonlab,
-    fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
+    fprintf(fid,' "addpath ''%s''; ', path2jsonlab);
     %path to DRASE
-    fprintf(fidJbFile,' addpath ''%s''; ', jobParams.path2drase);
+    fprintf(fid,' addpath ''%s''; ', jobParams.path2drase);
     %path to SHAPES, PSO, and project
-    fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
+    fprintf(fid,' setpath(''%s''); ', jobParamsFile);
     %Call drasesetup which sets up parameters for drase run
     %     fprintf(fidJbFile,' rungwpsosetup(''%s'', ''%s'');" \n', ...
     %         paramsFile,outdataFilePrfx);
     switch nCount
         case 1
-            fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
+            fprintf(fid, ' [~,~]=ana_basics(''%s'',''%s'',[],[],1,[]);" \n', ...
+                jobParamsFile,userUID);
+            fprintf(fidOutFileList,'%s\n',paramsFile);
+        case 2
+            fprintf(fid, ' rungwpso(''%s'',''%s'');" \n', ...
                 [paramsFile,'.mat'],dataFile); %pwelch ')
             fprintf(fidOutFileList,'%s\n',dataFile);
-        case 2
-            fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
+        case 3
+            fprintf(fid, ' rungwpso(''%s'',''%s'');" \n', ...
                 [paramsFileshps,'.mat'],shpsDataFile); %shps on pwelch ')
             fprintf(fidOutFileList,'%s\n',shpsDataFile);
     end
@@ -103,5 +113,6 @@ end
 % fclose(fidOutFileList);
 fclose(fidJbFile);
 %% Slurm file generation
+genslurm(jobParams,nJobs,anabasicsstr)
 genslurm(jobParams,nJobs)
 end

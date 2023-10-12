@@ -1,27 +1,51 @@
 % anabasics - bare bones from initial setup and before call to rungwpso
-%Requires jobParamsFile, userUID and datad to be set, optional can set
-%progCtrl and ebreak. 
-
 function [paramsFile,outdataFilePrfx,varargout] = ana_basics(jobParams,userUID,varargin)
 % Optional input Arguments 
-% [P,Y] = ana_basics(J,U,D,E,C)
+% [P,Y] = ana_basics(J,U,D,E,C,T)
 % Setting D allows the user to set a specific date for folder creation
 % This could be used to pull data from a specific date if E is not empty,
-% or overwride pre-existing data if it is.
+% or overwride pre-existing data if it is. E, if specified, returns the
+% function after only writing file strings for P and Y.
 % C controls whether or not a progress.txt file is generated for the run.
-% Optional outputs
+% Optional outputs. T is the plotting control option, default is no plot, 
+% setting '1' generates a spectrogram of the training series, '2' generates 
+% the PSD curve and '12' generates both.
+% Optional output Arguments
 % [P,Y,F,N] = ana_basics(J,U,D,E,C,T)
 % F returns a structure of file paths directories for figures, PSDs, and
-% end files. N is the full filename of the progress.txt file. T is the
-% plotting control option, default is no plot, setting 1 generates a
-% spectrogram of the training series, 2 generates the PSD curve and 12
-% generates both.
+% end files. N is the full filename of the progress.txt file. 
+%% jobParams datatype check - checks for whether jobParams is a structure, else assumes a file
+if ~isstruct(jobParams)
+    jobParams = loadjson(jobParams);
+end
+
+%% Optional Argument
+nreqArgin = 2;
+datad = [];
+anabreak = [];
+progCtrl = [];
+pltCtrl = 0;
+for largs = 1:(nargin-nreqArgin)
+    if ~isempty(varargin{largs})
+        switch largs
+            case 1
+                datad = varargin{largs};
+            case 2
+                anabreak = varargin{largs};
+            case 3
+                progCtrl = varargin{largs};
+            case 4
+                pltCtrl = varargin{largs};
+        end
+    end
+end
+
 %% Initial Setup: Parameters - job settings
 %Project and DRASE function and JSON load
 addpath(genpath(jobParams.path2drase));
 
 % Defining File Paths/Names and Folder Creation
-[outDir,filepaths] = dpfc(jobParams,userUID,varargin{1});
+[outDir,filepaths] = dpfc(jobParams,userUID,datad);
 varargout{1} = filepaths;
 paramsFile = [outDir,'params']; %rungwpso params file
 paramsFileshps = [paramsFile,'shps']; %rungwpso params file for shapes data
@@ -37,30 +61,29 @@ filetagstr = filetagana(psoParams,signalParams);
 outdataFilePrfx = [outDir,jobParams.jobName,'_',filetagstr];
 
 % Quick stop for partial runs, namely for setting file conventions
-if ~isempty(varargin{2})
+if ~isempty(anabreak)
     return
 end
 
 %% Progress Text file - Monitor code progress and completion (optional)
-progCtrl = varargin{3};
 if ~isempty(progCtrl) && progCtrl == 1
     progressFile = [outDir,'progress.txt'];
     varargout{2} = progressFile;
     fidprog = fopen(progressFile,'a');
     proglines = struct('nd','done.',...
     't',datestr(datetime('now')),... %fprintf(fidprog,'%s\n',datestr(datetime('now')));
-    'c','\nComputing Parameters...',...
-    'l','\nLoading Data...',...
-    'd','\nRunning Drase...',...
-    'w','\nData Conditioning on Welch...',...
-    's','\nData Conditioning on SHAPES...',...
-    'g','\nGlitch Check...');
+    'c','Computing Parameters...',...
+    'l','Loading Data...',...
+    'd','Running Drase...',...
+    'w','Data Conditioning on Welch...',...
+    's','Data Conditioning on SHAPES...',...
+    'g','Glitch Check...');
     progstatus(proglines.t,fidprog,progCtrl)
 end
 %% GW Parameter settings - combines relevant settings and performs necessary 
 % computations for rungwpso. Does not require time-series or PSD data
     progstatus(proglines.c,fidprog,progCtrl)
-params = gwpsoparams(psoParams,signalParams,paramsFile);
+gwpsoparams(psoParams,signalParams,paramsFile);
 copyfile([paramsFile,'.mat'],[paramsFileshps,'.mat']); %identical but separate parameter settings
     progstatus(proglines.nd,fidprog,progCtrl)
 %% Data Load - loads time-series performs bandpass, computes training segment PSD
@@ -70,10 +93,6 @@ copyfile([paramsFile,'.mat'],[paramsFileshps,'.mat']); %identical but separate p
 outData = load_mtchdfltrdata(jobParams.inFileData,jobParams.inFilePSD);
     progstatus(proglines.nd,fidprog,progCtrl)
 %% Glitch Checking - Visual clarification with spectrogram
-pltCtrl = 0;
-if ~isempty(varargin{4})
-    pltCtrl = varargin{4};
-end
 if pltCtrl == 1 || pltCtrl == 12
     progstatus(proglines.g,fidprog,progCtrl)
     figure;

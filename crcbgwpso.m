@@ -1,5 +1,5 @@
 % function outResults = crcbqcpso_tau(inParams,psoParams,nRuns, sampling_freq)
-function outResults = crcbgwpso(inParams,psoParams)
+function outResults = crcbgwpso(inParams,psoParams,varargin)
 %Regression of 2PNWaveform using Chirp-Time Space PSO
 % inParams: Struct containing data and signal parameters
 % psoParams: Struct containing PSO parameters
@@ -29,10 +29,33 @@ params = inParams;
 nRuns = psoParams.nRuns;
 
 nDim = 2;
+allCtrl = 0;
 outStruct = struct('bestLocation',[],...
                    'bestFitness', [],...
                    'totalFuncEvals',[]);
-                    
+nReqArgs = 2;
+if nargin > 2
+    for lpargs = 1:(nargin - nReqArgs)
+        if ~isempty(varargin{lpargs})
+            switch lpargs
+                case 1
+                    allCtrl = varargin{lpargs};
+                    if allCtrl<=2
+                        for lpo = 1:allCtrl
+                            switch lpo
+                                case 1
+                                    outStruct.allBestFit = [];
+                                case 2
+                                    outStruct.allBestLoc = [];
+                            end
+                        end
+                    end
+            end
+        end
+    end
+end
+
+
 outResults = struct('allRunsOutput',...
     struct('fitVal', [],...
     'gwCoefs',zeros(1,3),...
@@ -61,15 +84,15 @@ parfor lpruns = 1:nRuns
 %     disp(['Run ',num2str(lpruns),' of ', num2str(nRuns)])
     %Reset random number generator for each worker
     rng(lpruns);
-    outStruct(lpruns)=crcbpso(fHandle,nDim,psoParams);
+    outStruct(lpruns)=crcbpso(fHandle,nDim,psoParams,allCtrl);
 end
 
 %Prepare output
 fitVal = zeros(1,nRuns);
 for lpruns = 1:nRuns
 %     tic;
-%     outResults.allRunsOutput(lpruns).allBestFit = outStruct(lpruns).bestFitness;
-%     outResults.allRunsOutput(lpruns).allBestLoc = outStruct(lpruns).bestLocation;
+    outResults.allRunsOutput(lpruns).allBestFit = outStruct(lpruns).bestFitness;
+    outResults.allRunsOutput(lpruns).allBestLoc = outStruct(lpruns).bestLocation;
     fitVal(lpruns) = outStruct(lpruns).bestFitness;
     outResults.allRunsOutput(lpruns).fitVal = fitVal(lpruns);
     [~,gwCoefs,ta_index] = fHandle(outStruct(lpruns).bestLocation);
