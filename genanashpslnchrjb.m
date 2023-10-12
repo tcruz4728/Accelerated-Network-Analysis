@@ -89,7 +89,7 @@ for nCount = 1:3
     %path to DRASE
     fprintf(fid,' addpath ''%s''; ', jobParams.path2drase);
     %path to SHAPES, PSO, and project
-    fprintf(fid,' setpath(''%s''); ', jobParamsFile);
+
     %Call drasesetup which sets up parameters for drase run
     %     fprintf(fidJbFile,' rungwpsosetup(''%s'', ''%s'');" \n', ...
     %         paramsFile,outdataFilePrfx);
@@ -99,10 +99,12 @@ for nCount = 1:3
                 jobParamsFile,userUID);
             fprintf(fidOutFileList,'%s\n',paramsFile);
         case 2
+            fprintf(fid,' setpath(''%s''); ', jobParamsFile);
             fprintf(fid, ' rungwpso(''%s'',''%s'');" \n', ...
                 [paramsFile,'.mat'],dataFile); %pwelch ')
             fprintf(fidOutFileList,'%s\n',dataFile);
         case 3
+            fprintf(fid,' setpath(''%s''); ', jobParamsFile);
             fprintf(fid, ' rungwpso(''%s'',''%s'');" \n', ...
                 [paramsFileshps,'.mat'],shpsDataFile); %shps on pwelch ')
             fprintf(fidOutFileList,'%s\n',shpsDataFile);
