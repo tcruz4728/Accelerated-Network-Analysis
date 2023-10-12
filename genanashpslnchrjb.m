@@ -113,6 +113,6 @@ end
 % fclose(fidOutFileList);
 fclose(fidJbFile);
 %% Slurm file generation
-genslurm(jobParams,nJobs,anabasicsstr)
+genslurm(jobParams,nJobs,anabasicsstr,1,0.5)
 genslurm(jobParams,nJobs)
 end
