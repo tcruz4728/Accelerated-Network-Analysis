@@ -70,11 +70,13 @@ paramsFileshps = [paramsFile,'shps'];
 
 %% Constuct job file for Launcher
 fidJbFile = fopen([jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfile.txt'],'w');
+disp([jobParams.jobName,'_jbfile.txt',' file created in ',jobParams.scrtchDir,filesep])
 anabasicsstr = [jobParams.jobName,'anasetup'];
 fidbasicsJbFile = fopen([jobParams.scrtchDir,filesep,anabasicsstr,'_jbfile.txt'],'w');
+disp([anabasicsstr,'_jbfile.txt',' file created in ',jobParams.scrtchDir,filesep])
 %Store list of output files in .txt file for post-processing codes
 fidOutFileList = fopen([outdataFilePrfx,'outFilesList.txt'],'w');
-
+disp(['Output File list created in ',outdataFilePrfx])
 
 nJobs = 1;
 for nCount = 1:3
