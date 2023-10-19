@@ -63,7 +63,7 @@ end
 % progCtrl = 1; % Always set to on for debugging
 
 %% ANA prep package
-[paramsFile,outdataFilePrfx] = ana_basics(jobParams,userUID);
+[paramsFile,outdataFilePrfx] = ana_basics(jobParams,userUID,[],[],1);
 dataFile = [outdataFilePrfx,'C'];
 shpsDataFile = [outdataFilePrfx,'shps_C'];
 paramsFileshps = [paramsFile,'shps'];

@@ -6,7 +6,7 @@ function [paramsFile,outdataFilePrfx,varargout] = ana_basics(jobParams,userUID,v
 % This could be used to pull data from a specific date if E is not empty,
 % or overwride pre-existing data if it is. E, if specified, returns the
 % function after only writing file strings for P and Y.
-% C controls whether or not a progress.txt file is generated for the run.
+% C controls whether or not a progress.txt file is generated for the run, 1 is yes, else is no.
 % Optional outputs. T is the plotting control option, default is no plot, 
 % setting '1' generates a spectrogram of the training series, '2' generates 
 % the PSD curve and '12' generates both.
