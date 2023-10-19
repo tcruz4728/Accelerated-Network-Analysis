@@ -101,7 +101,6 @@ for nCount = 1:3
                 jobParamsFile,userUID);
             fprintf(fidOutFileList,'%s\n',paramsFile);
         case 2
-
             fprintf(fid, ' rungwpso(''%s'',''%s'');" \n', ...
                 [paramsFile,'.mat'],dataFile); %pwelch ')
             fprintf(fidOutFileList,'%s\n',dataFile);
