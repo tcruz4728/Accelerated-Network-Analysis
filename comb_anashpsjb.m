@@ -34,8 +34,10 @@ if ~isempty(varargin{2})
     datad = varargin{2};
 end
 
-[~,outdataFilePrfx,filepaths] = ana_basics(jobParams,userUID,datad,1);
-
+[~,outdataFilePrfx] = ana_basics(jobParams,userUID,datad,1);
+dataFile = [outdataFilePrfx,'C'];
+shpsDataFile = [outdataFilePrfx,'shps_C'];
+% paramsFileshps = [paramsFile,'shps'];
 %Construct name of the .txt file containing the list of output file names
 outFilesListFile = [outdataFilePrfx,'outFilesList.txt'];
 fidFileList = fopen(outFilesListFile,'r');
@@ -70,17 +72,15 @@ end
 %Input Data
 inputData = load(jobParams.inFileData);
 
-%PSD Data
+%PSD Data and interpolated PSD data
 psdData = load(jobParams.inFilePSD); %pwelch psd and highpassed time series
 estpsdData = load(jobParams.inFileshpsPSD); %estimated PSD and sampFreq only
 
-%Interpolated PSD data
+%Rungwpso Data
+outData = load(dataFile);
+estoutData = load(shpsDataFile);
 
-
-
-
-
-save(combFileName,"params");
+save(combFileName,"inputData","psdData","estpsdData","outData","estoutData");
 [pathstr,filename,~] = fileparts(combFileName);
 disp(['Saved ',filename,' to ',pathstr])
 end
