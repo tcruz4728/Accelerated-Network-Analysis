@@ -30,8 +30,17 @@ addpath(path2jsonlab);
 jobParams = loadjson(jobParamsFile);
 
 datad = date;
-if ~isempty(varargin{2})
-    datad = varargin{2};
+%Override the file name if optional input given
+nreqArgs = 3;
+for lpargs = 1:(nargin-nreqArgs)
+    if ~isempty(varargin{lpargs})
+        switch lpargs
+            case 1
+                combFileName = varargin{lpargs};
+            case 2
+                datad = varargin{lpargs};
+        end
+    end
 end
 
 [~,outdataFilePrfx] = ana_basics(jobParams,userUID,datad,1);
@@ -56,17 +65,7 @@ shpsDataFile = [outdataFilePrfx,'shps_C'];
 %Construct name of the file to store the combined data
 combFileName = [outdataFilePrfx,'F.mat'];
 
-%Override the file name if optional input given
-nreqArgs = 3;
-for lpargs = 1:(nargin-nreqArgs)
-    if ~isempty(varargin{lpargs})
-        switch lpargs
-            case 1
-                combFileName = varargin{lpargs};
-            otherwise
-        end
-    end
-end
+
 
 %% Data 
 %Input Data
