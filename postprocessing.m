@@ -1,18 +1,29 @@
-function postprocessing(jobParams,dataFile,shpsDataFile,filepaths)
+% function postprocessing(jobParams,dataFile,shpsDataFile,filepaths)
+function postprocessing(inDataFile,filepaths,injSig)
+% Loads in a file which contains 5 data structures.
+% 'inputData' -  time series data and time interval
+% 'psdData' - contains pwelch data and interpolated PSD
+% 'estpsdData' - contains shapes estimated PSD
+% 'outData' - output data from matched filtering run
+% 'estoutData' - output data from matched filtering run on SHAPES estimated
+% data
 
-% jobParams = loadjson(jobParamsFile);
+load(inDataFile,'inputData','psdData','estpsdData','outData','estoutData')
 
 %PSDs from each
-load(jobParams.inFilePSD,'PSD'); %Welchs PSD
-pwelchPSD = PSD;
-load(jobParams.inFileshpsPSD,'PSD'); %SHAPES estimated Welchs PSD
-shpsPSD = PSD;
-
+% load(jobParams.inFilePSD,'PSD'); %Welchs PSD
+% pwelchPSD = PSD;
+% load(jobParams.inFileshpsPSD,'PSD'); %SHAPES estimated Welchs PSD
+% shpsPSD = PSD;
+%% Time Series
+figure; 
+plot(outData.params.dataX,inputData.dataY)
+title('Time series data')
 %% PSD plot
 figure;
-semilogy(pwelchPSD)
+semilogy(psdData.interpPSD)
 hold on
-semilogy(shpsPSD)
+semilogy(estpsdData.interpPSD)
 title('Pwelch and SHAPES Estimated Pwelch data')
 legend('Pwelch','SHAPES Est')
 hold off
@@ -23,17 +34,23 @@ fprintf(fidparams,'%s\n',datestr(datetime('now')));
 for i = 1:2
     switch i
         case 1
-            load(dataFile,"params","outStruct","bestFitVal","original_fitVal")
+            % load(dataFile,"params","outStruct","bestFitVal","original_fitVal")
+            dataStruct = outData;
             disp('Running on Welch Data')
             titlestr = 'Pwelch Data';
         case 2
-            load(shpsDataFile,"params","outStruct","bestFitVal","original_fitVal")
+            % load(shpsDataFile,"params","outStruct","bestFitVal","original_fitVal")
+            dataStruct = estoutData;
             disp('Running on Shapes Estimated Welch Data')
             titlestr = 'Shapes Estimated Data';
     end
+    params = dataStruct.params;
+    outStruct = dataStruct.outStruct;
+    bestFitVal = dataStruct.bestFitVal;
+    original_fitVal = dataStruct.original_fitVal;
     % load(paramsFile,"gwCoefs")
     gwCoefs = params.gwCoefs;
-%     psoParams = params.pso;
+    %     psoParams = params.pso;
     signalParams = params.signal;
     %% Time Series plot with Matched Filtered signals overlayed
     figure;
@@ -67,7 +84,7 @@ for i = 1:2
     est_m1 = (est_M - sqrt(est_M^2 - 4*est_u*est_M))/2;
     est_m2 = (est_M + sqrt(est_M^2 - 4*est_u*est_M))/2;
 
-    if jobParams.injSig == 1
+    if injSig == 1
         injsigGWcoefs = ['Injected Signal GW Coefficients: tau0= ',num2str(gwCoefs(1)),...
             '; tau1p5= ',num2str(gwCoefs(2)),...
             '; m1= ', num2str(signalParams.masses(1)),...
@@ -91,7 +108,7 @@ for i = 1:2
     %             '; m2=',num2str(outStruct.bestGwCoefs(2))];
     %         fprintf(fidparams,'%s\n',estmParams);
     %     end
-    if jobParams.injSig == 1
+    if injSig == 1
         injsigParams = ['Injected Signal parameters: A = ',num2str(signalParams.snr),...
             '; phi = ',num2str(signalParams.phase),...
             '; t_a = ',num2str(signalParams.ta),...

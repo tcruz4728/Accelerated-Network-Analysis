@@ -65,8 +65,6 @@ shpsDataFile = [outdataFilePrfx,'shps_C'];
 %Construct name of the file to store the combined data
 combFileName = [outdataFilePrfx,'F.mat'];
 
-
-
 %% Data 
 %Input Data
 inputData = load(jobParams.inFileData);
