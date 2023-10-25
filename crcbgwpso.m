@@ -127,6 +127,8 @@ end
 %Find the best run
 [~,bestRun] = min(fitVal(:));
 outResults.bestRun = bestRun;
+outResults.allBestFitness = outResults.allRunsOutput(bestRun).allBestFit;
+outResults.allBestLocation = outResults.allRunsOutput(bestRun).allBestLoc;
 outResults.bestFitness = outResults.allRunsOutput(bestRun).fitVal;
 outResults.bestSig = outResults.allRunsOutput(bestRun).estSig;
 outResults.bestAmp = outResults.allRunsOutput(bestRun).estAmp;

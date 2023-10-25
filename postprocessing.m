@@ -19,13 +19,26 @@ load(inDataFile,'inputData','psdData','estpsdData','outData','estoutData')
 figure; 
 plot(outData.params.dataX,inputData.dataY)
 title('Time series data')
-%% PSD plot
+%% PSD plots
 figure;
-semilogy(psdData.interpPSD)
+semilogy(psdData.freqVec,psdData.PSD)
 hold on
-semilogy(estpsdData.interpPSD)
+semilogy(estpsdData.freqVec,estpsdData.PSD)
+axis tight
 title('Pwelch and SHAPES Estimated Pwelch data')
 legend('Pwelch','SHAPES Est')
+saveas(gcf,[filepaths.figs,'PSD']);
+hold off
+
+freqVecinterp = linspace(psdData.freqVec(1),psdData.freqVec(end),length(psdData.interpPSD));
+figure;
+semilogy(freqVecinterp,psdData.interpPSD)
+hold on
+semilogy(freqVecinterp,estpsdData.interpPSD)
+axis tight
+title('Interpolated Pwelch and SHAPES Estimated Pwelch data')
+legend('Pwelch','SHAPES Est')
+saveas(gcf,[filepaths.figs,'PSD_Interpolated']);
 hold off
 
 %Records parameters in txt file
@@ -60,7 +73,9 @@ for i = 1:2
     plot(params.dataX,outStruct.bestSig,'Color',[76,153,0]/255,'LineWidth',2.0);
     legend('Data','Signal',...
         'Estimated signal: Best run');
+    axis tight
     saveas(gcf,[filepaths.figs,'PSO_Results']);
+
     hold off;
 
     %% GW Coefficients Iteration Optimization
