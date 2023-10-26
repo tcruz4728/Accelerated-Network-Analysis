@@ -1,4 +1,4 @@
-function comb_anashpsjb(path2jsonlab,jobParamsFile,userUID,varargin)
+function varargout = comb_anashpsjb(path2jsonlab,jobParamsFile,userUID,varargin)
 %COMBANASHPSJB(J,F,U)
 %Post-job function to combine data for PC download.
 %J is the path to the jsonlab package. If set to '', the jsonlab package is
@@ -46,21 +46,6 @@ end
 [~,outdataFilePrfx] = ana_basics(jobParams,userUID,datad,1);
 dataFile = [outdataFilePrfx,'C'];
 shpsDataFile = [outdataFilePrfx,'shps_C'];
-% paramsFileshps = [paramsFile,'shps'];
-%Construct name of the .txt file containing the list of output file names
-% outFilesListFile = [outdataFilePrfx,'outFilesList.txt'];
-% fidFileList = fopen(outFilesListFile,'r');
-% if fidFileList == -1
-%     error(['Error opening ',outFilesListFile]);
-% end
-% nFiles = 0;
-% outFilesList = {};
-% % while ~feof(fidFileList)
-% %     outFileName = fgetl(fidFileList);
-% %     outFilesList = [outFilesList, outFileName];
-% %     nFiles = nFiles+1;
-% % end
-% fclose(fidFileList);
 
 %Construct name of the file to store the combined data
 combFileName = [outdataFilePrfx,'F.mat'];
@@ -80,4 +65,5 @@ estoutData = load(shpsDataFile);
 save(combFileName,"inputData","psdData","estpsdData","outData","estoutData");
 [pathstr,filename,~] = fileparts(combFileName);
 disp(['Saved ',filename,' to ',pathstr])
+varargout{1} = combFileName;
 end

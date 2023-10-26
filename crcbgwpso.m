@@ -91,8 +91,8 @@ end
 fitVal = zeros(1,nRuns);
 for lpruns = 1:nRuns
 %     tic;
-    outResults.allRunsOutput(lpruns).allBestFit = outStruct(lpruns).bestFitness;
-    outResults.allRunsOutput(lpruns).allBestLoc = outStruct(lpruns).bestLocation;
+    outResults.allRunsOutput(lpruns).allBestFit = outStruct(lpruns).allBestFit;
+    outResults.allRunsOutput(lpruns).allBestLoc = outStruct(lpruns).allBestLoc;
     fitVal(lpruns) = outStruct(lpruns).bestFitness;
     outResults.allRunsOutput(lpruns).fitVal = fitVal(lpruns);
     [~,gwCoefs,ta_index] = fHandle(outStruct(lpruns).bestLocation);

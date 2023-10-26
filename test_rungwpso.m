@@ -4,7 +4,7 @@ userUID = input("Type UID value: ");
 datad = input("Date of Data (leave empty for current): ");
 %Writes a progress file 
 progCtrl = input("For a progress file, type 1: ");
-
+path2jsonlab = 'C:\Users\Thomas Cruz\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\JSONLab_ a toolbox to encode_decode JSON files\jsonlab-2.0';
 %Job File 
 jobParamsFile = 'C:\Users\Thomas Cruz\Documents\GitHub\Accelerated-Network-Analysis\JSON\PCmtchdfltrtest_Job_params.json';
 %Load job parameters
@@ -28,6 +28,7 @@ rungwpso(paramsFileshps,shpsDataFile) %shapes estimate
     progstatus(proglines.nd,fidprog,progCtrl)
 %% Post Processing
     progstatus(proglines.p,fidprog,progCtrl)
-postprocessing(jobParams,dataFile,shpsDataFile,filepaths);
+combFileName = comb_anashpsjb(path2jsonlab,jobParamsFile,userUID);
+postprocessing(combFileName,filepaths,jobParams.injSig);
     progstatus(proglines.nd,fidprog,progCtrl)
 fclose(fidprog);
