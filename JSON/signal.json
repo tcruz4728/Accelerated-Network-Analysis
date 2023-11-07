@@ -1,7 +1,7 @@
 {
 "sampling_freq": 4096,
 "ta": 138,
-"snr": 10,
+"snr": 15,
 "r":40,
 "phase": 0,
 "masses": [2, 2],
@@ -22,7 +22,7 @@
 },
 "signal": 
     {
-"T_sig_len": 256,
+"T_sig_len": 512,
 "T_sig": 54,
 "num": 1,
 "noise": 1

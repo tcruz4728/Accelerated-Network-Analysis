@@ -51,12 +51,14 @@ for i = 1:2
             dataStruct = outData;
             disp('Running on Welch Data')
             titlestr = 'Pwelch Data';
+
         case 2
             % load(shpsDataFile,"params","outStruct","bestFitVal","original_fitVal")
             dataStruct = estoutData;
             disp('Running on Shapes Estimated Welch Data')
             titlestr = 'Shapes Estimated Data';
     end
+    fprintf(fidparams,'%s\n',titlestr);
     params = dataStruct.params;
     outStruct = dataStruct.outStruct;
     bestFitVal = dataStruct.bestFitVal;
@@ -75,7 +77,6 @@ for i = 1:2
         'Estimated signal: Best run');
     axis tight
     saveas(gcf,[filepaths.figs,'PSO_Results']);
-
     hold off;
 
     %% GW Coefficients Iteration Optimization
