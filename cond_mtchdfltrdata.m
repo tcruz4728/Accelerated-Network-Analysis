@@ -35,10 +35,12 @@ dataYwin = tukeywin(size(dataY,2),0.5*sampFreq/(size(dataY,2)));
 dataY = dataY.*dataYwin';
 
 %Compute transfer function and FFT
-TF = 1./sqrt((interpPSD./2));
-TF(1:(freqBnd(1)*tlen)) = 0; %Zeroing frequencies below min frequency
-TFtotal = [TF, TF((kNyq-negFStrt):-1:2)]; %Computed from training segment
-fftdataYbyPSD = fft(dataY).*TFtotal.*TFtotal.*params.A;
+% TF = 1./sqrt((interpPSD./2));
+% TF(1:(freqBnd(1)*tlen)) = 0; %Zeroing frequencies below min frequency
+% TFtotal = [TF, TF((kNyq-negFStrt):-1:2)]; %Computed from training segment
+[whtndfiltdata, ~, TFtotal]=segdatacond(dataY, interpPSD, sampFreq, [1,32*sampFreq]);
+
+fftdataYbyPSD = fft(whtndfiltdata).*TFtotal.*params.A;
 
 %% Create General Normalization Factor
 AbysqrtPSD = params.A.*TFtotal;
