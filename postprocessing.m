@@ -7,16 +7,11 @@ function postprocessing(inDataFile,filepaths,injSig)
 % 'outData' - output data from matched filtering run
 % 'estoutData' - output data from matched filtering run on SHAPES estimated
 % data
-
+close all
 load(inDataFile,'inputData','psdData','estpsdData','outData','estoutData')
 
-%PSDs from each
-% load(jobParams.inFilePSD,'PSD'); %Welchs PSD
-% pwelchPSD = PSD;
-% load(jobParams.inFileshpsPSD,'PSD'); %SHAPES estimated Welchs PSD
-% shpsPSD = PSD;
 %% Time Series
-figure; 
+figure;
 plot(outData.params.dataX,inputData.dataY)
 title('Time series data')
 %% PSD plots
@@ -37,6 +32,8 @@ hold on
 semilogy(freqVecinterp,estpsdData.interpPSD)
 axis tight
 title('Interpolated Pwelch and SHAPES Estimated Pwelch data')
+xlabel('Frequency (Hz)')
+ylabel('PSD')
 legend('Pwelch','SHAPES Est')
 saveas(gcf,[filepaths.figs,'PSD_Interpolated']);
 hold off
@@ -68,17 +65,45 @@ for i = 1:2
     %     psoParams = params.pso;
     signalParams = params.signal;
     %% Time Series plot with Matched Filtered signals overlayed
-    figure;
+    figure(4);
     hold on;
-    plot(params.dataX,params.dataY,'.');
-    title(titlestr)
-    plot(params.dataX,outStruct.bestSig,'Color',[76,153,0]/255,'LineWidth',2.0);
-    legend('Data','Signal',...
-        'Estimated signal: Best run');
+    %     plot(params.dataX,params.dataY,'.');
+    %     title(titlestr)
+    title('Signal Time Series')
+    plot(params.dataX,outStruct.bestSig)
+    %     plot(params.dataX,outStruct.bestSig,'Color',[76,153,0]/255,'LineWidth',2.0);
+    legend('Pwelch','SHAPES Est')
     axis tight
-    saveas(gcf,[filepaths.figs,'PSO_Results']);
+    %     saveas(gcf,[filepaths.figs,'PSO_Results']);
     hold off;
 
+    %% Allbest Plots
+    figure(5);
+    hold on
+    plot(outStruct.allBestFitness)
+    title('Best Fitness and Locations vs. Iterations')
+    legend('Pwelch','SHAPES Est')
+    ylabel('Fitness Value')
+    xlabel('Iteration Number')
+    hold off
+
+    figure(6);
+    hold on
+    plot(outStruct.allBestLocation(:,1))
+    title('Best x-Location vs. Iterations')
+    legend('Pwelch','SHAPES Est')
+    ylabel('X-Coordinate')
+    xlabel('Iteration Number')
+    hold off
+
+    figure(7);
+    hold on
+    plot(outStruct.allBestLocation(:,2))
+    title('Best y-Location vs. Iterations')
+    legend('Pwelch','SHAPES Est')
+    ylabel('Y-Coordinate')
+    xlabel('Iteration Number')
+    hold off
     %% GW Coefficients Iteration Optimization
     if i == 1
         figure;

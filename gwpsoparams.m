@@ -1,5 +1,5 @@
 % rungwpso setup script
-function varargout = gwpsoparams(psoParams,signalParams,outFileName)
+function varargout = gwpsoparams(psoParams,signalParams,varargin)
 % if jobParams.injSig == 1
 %     signalParams = loadjson(jobParams.signalParamsjson);
 % end
@@ -70,4 +70,6 @@ params = struct('dataX', timeVec,...
 if nargout>0
     varargout{1} = params;
 end
-save(outFileName,'params','psoParams','signalParams','gwCoefs')
+if nargin >2
+    save(varargin{1},'params','psoParams','signalParams','gwCoefs')
+end

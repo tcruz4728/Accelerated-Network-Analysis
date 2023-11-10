@@ -12,7 +12,7 @@
 "scrtchDir":"SCRATCH",
 "psoParamsjson":"pso.json",
 "signalParamsjson":"signal.json",
-"injSig":1,
+"injSig":"",
 "accessctrl":"sep",
 "jbTime": 1,
 "nNodes": 1,
