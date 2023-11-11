@@ -12,7 +12,7 @@
 "scrtchDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
 "psoParamsjson":"pso.json",
 "signalParamsjson":"signal.json",
-"injSig":0,
+"injSig":"",
 "accessctrl":"sep",
 "jbTime": 1.5,
 "nNodes": 1,
