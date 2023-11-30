@@ -60,11 +60,22 @@ for i = 1:2
     outStruct = dataStruct.outStruct;
     bestFitVal = dataStruct.bestFitVal;
     original_fitVal = dataStruct.original_fitVal;
+    mf1 = dataStruct.mf(1,:);
+    mf2 = dataStruct.mf(2,:);
     % load(paramsFile,"gwCoefs")
     gwCoefs = params.gwCoefs;
     %     psoParams = params.pso;
     signalParams = params.signal;
+    %% Matched Filtering quadrature
+    figure(42);
+    hold on
+    title('Matched Filter MF')
+    plot(params.dataX,mf1.^2 + mf2.^2)
+        legend('Pwelch','SHAPES Est')
+    axis tight
+    hold off
     %% Time Series plot with Matched Filtered signals overlayed
+   
     figure(4);
     hold on;
     %     plot(params.dataX,params.dataY,'.');
@@ -75,7 +86,7 @@ for i = 1:2
     legend('Pwelch','SHAPES Est')
     axis tight
     %     saveas(gcf,[filepaths.figs,'PSO_Results']);
-    hold off;
+    hold off
 
     %% Allbest Plots
     figure(5);

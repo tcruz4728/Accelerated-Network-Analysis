@@ -1,4 +1,4 @@
-function [mfVal, max_arg] = mfqc(gwCoefs,params)
+function [mfVal, max_arg,varargout] = mfqc(gwCoefs,params)
 
 %MatchedFiltering for Chirp time space PSO
 %Raghav Girgaonkar, April 2023
@@ -19,3 +19,4 @@ mf1 = matchedfiltering(params.fftdataYbyPSD, fftq0);
 mf2 = matchedfiltering(params.fftdataYbyPSD, fftq1);
 [max_val, max_arg] = max(mf1(1:end - prod).^2 + mf2(1:end - prod).^2);
 mfVal = -1*max_val;
+varargout{1} = [mf1;mf2];

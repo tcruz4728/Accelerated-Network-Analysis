@@ -1,7 +1,7 @@
 {
 "sampling_freq": 4096,
 "ta": 138,
-"snr": 15,
+"snr": 200,
 "r":40,
 "phase": 0,
 "masses": [2, 2],

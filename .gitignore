@@ -6,8 +6,9 @@
 *.mat
 *.fig
 *.txt
-References/
+*.png
 *.hdf5
+References/
 Scratch/
 TMPLINEDATA/
 TMPMTCHDDATA/
