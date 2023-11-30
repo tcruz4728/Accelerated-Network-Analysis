@@ -103,7 +103,7 @@ for lpruns = 1:nRuns
     estTa = ta_index/params.Fs;
     outResults.allRunsOutput(lpruns).estTa = estTa;
 
-    fftq0 = gen2PNwaveform(params,ta_index,0,gwCoefs,1);
+    fftq0 = gen2PNwaveform(params,estTa,0,gwCoefs,1);
     fftq1 = fftq0.*params.phaseDiff;
     %Estimated Phase
     yq0 = innerprodpsd(fftq0, params.fftdataYbyPSD);
@@ -116,7 +116,7 @@ for lpruns = 1:nRuns
     outResults.allRunsOutput(lpruns).estAmp = estAmp;
 
     %Estimated Signal
-    estSigphase = gen2PNwaveform(params,ta_index,estPhase,gwCoefs,estAmp);
+    estSigphase = gen2PNwaveform(params,estTa,estPhase,gwCoefs,estAmp);
     estSigfourier = (params.A).*estSigphase;
     estSig = ifft(estSigfourier);
 
