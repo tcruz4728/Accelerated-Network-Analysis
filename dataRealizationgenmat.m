@@ -1,4 +1,4 @@
-params = loadjson('JSON\realizations.json');
+params = loadjson(['JSON',filesep,'realizations.json']);
 
 switch params.dataGenType
     case 1 %Data Loading from externally generated files
@@ -19,7 +19,7 @@ tIntrvl = 1/sigparams.sampFreq;
 
 for i = 1:size(data_realizations,1)
     dataY = data_realizations(i,:);
-    save(['TMPPSDDATA',filesep,test',num2str(i),'_',num2str(sigparams.datalen),...
+    save(['TMPPSDDATA',filesep,'test',num2str(i),'_',num2str(sigparams.datalen),...
         's_inj',num2str(sigparams.ta),'_fs',num2str(sigparams.sampFreq),'.mat'],...
         "dataY","tIntrvl",'PSD')
 end
