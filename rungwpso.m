@@ -6,7 +6,7 @@ function []=rungwpso(paramsFile,outFileName)
 
 load(paramsFile,'gwCoefs','params','psoParams'); % Loads in params structure
 
-[original_fitVal,~,mf] = mfqc([gwCoefs, 2], params);
+[original_fitVal,~,mf] = mfgw([gwCoefs, 2], params);
 original_fitVal = -1*original_fitVal;
 if isempty(gcp('nocreate'))
     parpool('Processes',psoParams.nRuns)

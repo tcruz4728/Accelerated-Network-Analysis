@@ -95,24 +95,26 @@ for lpruns = 1:nRuns
     outResults.allRunsOutput(lpruns).allBestLoc = outStruct(lpruns).allBestLoc;
     fitVal(lpruns) = outStruct(lpruns).bestFitness;
     outResults.allRunsOutput(lpruns).fitVal = fitVal(lpruns);
-    [~,gwCoefs,ta_index] = fHandle(outStruct(lpruns).bestLocation);
+    [~,gwCoefs,~] = fHandle(outStruct(lpruns).bestLocation);
     outResults.allRunsOutput(lpruns).gwCoefs = gwCoefs;
-    outResults.allRunsOutput(lpruns).ta_index = ta_index;
+
+    [~,~,~,estAmp, estTa, estPhase] = mfgw(gwCoefs, params);
+%     outResults.allRunsOutput(lpruns).ta_index = ta_index;
     
     %Calculate time using sampling freq and ta_index
-    estTa = ta_index/params.Fs;
+%     estTa = ta_index/params.Fs;
     outResults.allRunsOutput(lpruns).estTa = estTa;
 
-    fftq0 = gen2PNwaveform(params,estTa,0,gwCoefs,1);
-    fftq1 = fftq0.*params.phaseDiff;
-    %Estimated Phase
-    yq0 = innerprodpsd(fftq0, params.fftdataYbyPSD);
-    yq1 = innerprodpsd(fftq1, params.fftdataYbyPSD);
-    estPhase = atan2(yq1,yq0);
+%     fftq0 = gen2PNwaveform(params,estTa,0,gwCoefs,1);
+%     fftq1 = fftq0.*params.phaseDiff;
+%     %Estimated Phase
+%     yq0 = innerprodpsd(fftq0, params.fftdataYbyPSD);
+%     yq1 = innerprodpsd(fftq1, params.fftdataYbyPSD);
+%     estPhase = atan2(yq1,yq0);
     outResults.allRunsOutput(lpruns).estPhase = estPhase;
 
     %Estimated Amplitude
-    estAmp = cos(estPhase)*yq0 + sin(estPhase)*yq1;
+%     estAmp = cos(estPhase)*yq0 + sin(estPhase)*yq1;
     outResults.allRunsOutput(lpruns).estAmp = estAmp;
 
     %Estimated Signal
@@ -134,6 +136,6 @@ outResults.bestSig = outResults.allRunsOutput(bestRun).estSig;
 outResults.bestAmp = outResults.allRunsOutput(bestRun).estAmp;
 outResults.bestPhase = outResults.allRunsOutput(bestRun).estPhase;
 outResults.bestGwCoefs = outResults.allRunsOutput(bestRun).gwCoefs;
-outResults.bestTaIndex = outResults.allRunsOutput(bestRun).ta_index;
+% outResults.bestTaIndex = outResults.allRunsOutput(bestRun).ta_index;
 outResults.bestTime = outResults.allRunsOutput(bestRun).estTa;
 

@@ -1,7 +1,8 @@
-function [mfVal, max_arg,varargout] = mfqc(gwCoefs,params)
+function [mfVal, max_arg,varargout] = mfgw(gwCoefs,params)
 
 %MatchedFiltering for Chirp time space PSO
 %Raghav Girgaonkar, April 2023
+%Updated to include optional outputs from getparamestimates.m - TC, Jan 2024
 
 %Generate normalized quadrature templates
 % tau0 = x(1);
@@ -20,3 +21,13 @@ mf2 = matchedfiltering(params.fftdataYbyPSD, fftq1);
 [max_val, max_arg] = max(mf1(1:end - prod).^2 + mf2(1:end - prod).^2);
 mfVal = -1*max_val;
 varargout{1} = [mf1;mf2];
+%Estimated SNR
+varargout{2} = sqrt(max_val); %estAmp
+%Estimated ToA:
+varargout{3} = max_arg/params.Fs; %estTa
+
+%Estimated Phase
+yq0 = mf1(max_arg);
+yq1 = mf2(max_arg);
+
+varargout{4} = atan2(yq1,yq0); %estPhase

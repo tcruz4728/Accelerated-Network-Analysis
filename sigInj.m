@@ -45,7 +45,8 @@ params.normfac = 1;
 % r = r*Mpc;
 r = signalParams.r*Mpc;
 % Afac = ((2*u*G)/(r*c^4))*(G*M*pi)^(2/3);
-Afac = ((384/5)^(1/2))*(pi^(2/3))*(chirpmass^(5/6))*(G^(5/6))*(c^(-3/2))/r;
+% Afac = ((384/5)^(1/2))*(pi^(2/3))*(chirpmass^(5/6))*(G^(5/6))*(c^(-3/2))/r;
+% whtndstd = segdatacond(noise,psd,4096,[1,32*4096]);
 
 %Create Fourier Phase vector
 % wavephase = gen2PNwaveform(fpos, ta, phase, fmin, fmax, m1,m2,datalen, initial_phase, snr, N, avec, normfac);
