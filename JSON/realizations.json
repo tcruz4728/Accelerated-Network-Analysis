@@ -1,5 +1,5 @@
   {
-      "path2sensitivitydata":"TMPPSDDATA/iLIGOSensitivity.txt",
+      "path2sensitivitydata":"TMPPSDDATA/",
       "extGenFilename":"/TMPPSDDATA/data_realizations_10Nov2023.mat",
       "datalen":512,
       "ta":138,
