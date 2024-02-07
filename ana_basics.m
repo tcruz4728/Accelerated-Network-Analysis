@@ -117,7 +117,7 @@ end
 % input: inFilePSD - training segment PSD from load_mtchdfltrdata.m
 % output: inFileshpsPSD - shapes estimation of training segment PSD
     progstatus(proglines.d,fidprog,progCtrl)
-run_test_drase4lines(jobParams,userUID);
+run_drase4lines(jobParams,userUID);
     progstatus(proglines.nd,fidprog,progCtrl)
 
 %% Interpolation - Takes log10 of PSDs, interpolates and inverses the log 

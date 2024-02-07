@@ -39,10 +39,10 @@ for lpargs = 1:(nargin-nreqArgs)
                 strtFreq = varargin{lpargs};
             case 2
                 endFreq = varargin{lpargs};
-            case 3
-                winLenFac = varargin{lpargs};
-            case 4
-                filtordr = varargin{lpargs};
+            % case 3
+            %     winLenFac = varargin{lpargs};
+            % case 4
+            %     filtordr = varargin{lpargs};
         end
     end
 end

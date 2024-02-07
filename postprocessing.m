@@ -48,12 +48,13 @@ for i = 1:2
             dataStruct = outData;
             disp('Running on Welch Data')
             titlestr = 'Pwelch Data';
-
+            legendstr = 'Pwelch';
         case 2
             % load(shpsDataFile,"params","outStruct","bestFitVal","original_fitVal")
             dataStruct = estoutData;
             disp('Running on Shapes Estimated Welch Data')
             titlestr = 'Shapes Estimated Data';
+            legendstr = ['Pwelch','SHAPES Est'];
     end
     fprintf(fidparams,'%s\n',titlestr);
     params = dataStruct.params;
@@ -71,7 +72,7 @@ for i = 1:2
     hold on
     title('Matched Filter MF')
     plot(params.dataX,mf1.^2 + mf2.^2)
-        legend('Pwelch','SHAPES Est')
+        legend(legendstr)
     axis tight
     hold off
     %% Time Series plot with Matched Filtered signals overlayed
@@ -83,7 +84,7 @@ for i = 1:2
     title('Signal Time Series')
     plot(params.dataX,outStruct.bestSig)
     %     plot(params.dataX,outStruct.bestSig,'Color',[76,153,0]/255,'LineWidth',2.0);
-    legend('Pwelch','SHAPES Est')
+    legend(legendstr)
     axis tight
     %     saveas(gcf,[filepaths.figs,'PSO_Results']);
     hold off
@@ -93,7 +94,7 @@ for i = 1:2
     hold on
     plot(outStruct.allBestFitness)
     title('Best Fitness and Locations vs. Iterations')
-    legend('Pwelch','SHAPES Est')
+    legend(legendstr)
     ylabel('Fitness Value')
     xlabel('Iteration Number')
     hold off
@@ -102,7 +103,7 @@ for i = 1:2
     hold on
     plot(outStruct.allBestLocation(:,1))
     title('Best x-Location vs. Iterations')
-    legend('Pwelch','SHAPES Est')
+    legend(legendstr)
     ylabel('X-Coordinate')
     xlabel('Iteration Number')
     hold off
@@ -111,7 +112,7 @@ for i = 1:2
     hold on
     plot(outStruct.allBestLocation(:,2))
     title('Best y-Location vs. Iterations')
-    legend('Pwelch','SHAPES Est')
+    legend(legendstr)
     ylabel('Y-Coordinate')
     xlabel('Iteration Number')
     hold off
