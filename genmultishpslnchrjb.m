@@ -13,9 +13,12 @@ inFileNameList = cell(jobParams.inFileDataRange(2),1);
 interFileNameList = cell(jobParams.inFileDataRange(2),1);
 outFileNameList = cell(jobParams.inFileDataRange(2),1);
 for fileCount = 1:jobParams.inFileDataRange(2)
-    inFileNameList{fileCount} = [jobParams.inFileDataPrFx,num2str(fileCount),'.mat'];
-    interFileNameList{fileCount} = [interFilePath,filesep,interFileName,'_n',num2str(fileCount),'.mat'];
-    outFileNameList{fileCount} = [jobParams.inFileshpsPSD,'_n',num2str(fileCount),'.mat'];
+    inFileNameList{fileCount} = [jobParams.inFileDataPrFx,...
+        num2str(fileCount),'.mat'];
+    interFileNameList{fileCount} = [interFilePath,filesep,...
+        interFileName,'_n',num2str(fileCount),'.mat'];
+    outFileNameList{fileCount} = [jobParams.inFileshpsPSD,'_n',...
+        num2str(fileCount),'.mat'];
 end
 [~,outdataFilePrfx] = ana_prep(jobParams,varargin{1},[],1);
 
@@ -23,7 +26,7 @@ end
 fidJbFile = fopen([jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfile.txt'],'w');
 disp(['Job File: ',jobParams.jobName,'_jbfile.txt',' file created in ',jobParams.scrtchDir,filesep])
 %Store list of output files in .txt file for post-processing codes
-fidOutFileList = fopen([outdataFilePrfx,'outFilesList.txt'],'w');
+fidOutFileList = fopen([outdataFilePrfx,'shpsoutFilesList.txt'],'w');
 disp(['Output File list created in ',outdataFilePrfx])
 
 nJobs = 1;
