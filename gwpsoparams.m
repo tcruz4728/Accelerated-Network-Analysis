@@ -12,11 +12,11 @@ nSamples = T_sig_len*sampFreq; %Number of samples
 if psoParams.type == 2 % Search range of phase coefficients
     rmin = [signalParams.rmin_tau(1), signalParams.rmin_tau(2)];
     rmax = [signalParams.rmax_tau(1), signalParams.rmax_tau(2)];
-        disp("Tau Space PSO");
+        disp("gwpsoparams- Tau Space PSO");
 else
     rmin = [signalParams.rmin(1), signalParams.rmin(2)];
     rmax = [signalParams.rmax(1), signalParams.rmax(2)];
-        disp("Mass Space PSO");
+        disp("gwpsoparams- Mass Space PSO");
 end
 
 % Constants

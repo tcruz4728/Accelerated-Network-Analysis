@@ -81,7 +81,7 @@ for lpruns = 1:nRuns
 end
 
 parfor lpruns = 1:nRuns
-%     disp(['Run ',num2str(lpruns),' of ', num2str(nRuns)])
+%     disp(['crcbgwpso- Run ',num2str(lpruns),' of ', num2str(nRuns)])
     %Reset random number generator for each worker
     rng(lpruns);
     outStruct(lpruns)=crcbpso(fHandle,nDim,psoParams,allCtrl);

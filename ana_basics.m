@@ -70,7 +70,7 @@ if ~isempty(progCtrl) && progCtrl == 1
     progressFile = [outDir,'progress.txt'];
     varargout{2} = progressFile;
     fidprog = fopen(progressFile,'a');
-    disp(['Progress File created in ',outDir])
+    disp(['ana_basics- Progress File created: ',progressFile])
     proglines = struct('nd','done.',...
     't',datestr(datetime('now')),... %fprintf(fidprog,'%s\n',datestr(datetime('now')));
     'c','Computing Parameters...',...
@@ -140,8 +140,8 @@ cond_mtchdfltrdata(jobParams.inFilePSD,paramsFile,jobParams.injSig);
     progstatus(proglines.s,fidprog,progCtrl)
 cond_mtchdfltrdata(jobParams.inFileshpsPSD,paramsFileshps,jobParams.injSig);
     progstatus(proglines.nd,fidprog,progCtrl)
-[paramsFilepath,paramsFileName,~] = fileparts([paramsFile,'.mat']);
-[~,paramsFileshpsName,~] = fileparts([paramsFileshps,'.mat']);
-disp(['Parameter files ',paramsFileName, ' and ',paramsFileshpsName,' saved into ',paramsFilepath])
+% [paramsFilepath,paramsFileName,~] = fileparts([paramsFile,'.mat']);
+% [~,paramsFileshpsName,~] = fileparts([paramsFileshps,'.mat']);
+disp(['ana_basics- Parameter files saved: ',paramsFile, '.mat and ',paramsFileshps,'.mat'])
 if ~isempty(progCtrl) && progCtrl == 1, fclose(fidprog); end
 end

@@ -24,10 +24,10 @@ end
 
 %% Job Text File
 fidJbFile = fopen([jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfile.txt'],'w');
-disp(['Job File: ',jobParams.jobName,'_jbfile.txt',' file created in ',jobParams.scrtchDir,filesep])
+disp(['Job File created: ',jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfile.txt'])
 %Store list of output files in .txt file for post-processing codes
 fidOutFileList = fopen([outdataFilePrfx,'shpsoutFilesList.txt'],'w');
-disp(['Output File list created in ',outdataFilePrfx])
+disp(['Output File list created: ',outdataFilePrfx,'shpsoutFilesList.txt'])
 
 nJobs = 1;
 for nCount = 1:fileCount

@@ -46,15 +46,15 @@ for i = 1:2
         case 1
             % load(dataFile,"params","outStruct","bestFitVal","original_fitVal")
             dataStruct = outData;
-            disp('Running on Welch Data')
+            % disp('Running on Welch Data')
             titlestr = 'Pwelch Data';
             legendstr = 'Pwelch';
         case 2
             % load(shpsDataFile,"params","outStruct","bestFitVal","original_fitVal")
             dataStruct = estoutData;
-            disp('Running on Shapes Estimated Welch Data')
+            % disp('Running on Shapes Estimated Welch Data')
             titlestr = 'Shapes Estimated Data';
-            legendstr = ['Pwelch','SHAPES Est'];
+            legendstr = {'Pwelch','SHAPES Est'};
     end
     fprintf(fidparams,'%s\n',titlestr);
     params = dataStruct.params;
@@ -175,4 +175,5 @@ for i = 1:2
     fprintf(fidparams,'%s\n',estParams);
 end
 fclose(fidparams);
+disp(['postprocessing- Saved parameters to .txt file: ',filepaths.end,'parameters.txt'])
 end

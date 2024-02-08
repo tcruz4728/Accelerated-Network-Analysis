@@ -63,7 +63,7 @@ outData = load(dataFile);
 estoutData = load(shpsDataFile);
 
 save(combFileName,"inputData","psdData","estpsdData","outData","estoutData");
-[pathstr,filename,~] = fileparts(combFileName);
-disp(['Saved ',filename,' to ',pathstr])
+% [pathstr,filename,~] = fileparts(combFileName);
+disp(['comb_anashpsjb- Saved combined data to ',combFileName])
 varargout{1} = combFileName;
 end
