@@ -7,7 +7,7 @@ progCtrl = input("For a progress file, type 1: ");
 path2jsonlab = 'C:\Users\tcruz\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\JSONLab_ a toolbox to encode_decode JSON files\jsonlab-2.0';
 addpath(path2jsonlab)
 %Job File 
-jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\mtchdfltr_PC_Job_params.json';
+jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\mf_PC_Job_params.json';
 %Load job parameters
 jobParams = loadjson(jobParamsFile);
 %% Runs necessary prep-functions for rungwpso
