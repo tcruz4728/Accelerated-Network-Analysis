@@ -64,46 +64,56 @@ end
 
 %% ANA prep package
 [paramsFile,outdataFilePrfx] = ana_prep(jobParams,userUID,[],[],1);
-dataFile = [outdataFilePrfx,'C'];
-shpsDataFile = [outdataFilePrfx,'shps_C'];
 paramsFileshps = [paramsFile,'shps'];
-
+paramsFileList = cell(jobParams.inFileDataRange(2),1);
+paramsFileshpsList = cell(jobParams.inFileDataRange(2),1);
+dataFileList = cell(jobParams.inFileDataRange(2),1);
+shpsDataFileList = cell(jobParams.inFileDataRange(2),1);
+for fileCount = 1:jobParams.inFileDataRange(2)
+    paramsFileList{fileCount} = [paramsFile,'_n',...
+        num2str(fileCount),'.mat'];
+    paramsFileshpsList{fileCount} = [paramsFileshps,'_n',...
+        num2str(fileCount),'.mat'];
+    dataFileList{fileCount} = [outdataFilePrfx,'_n',...
+        num2str(fileCount),'C'];
+    shpsDataFileList{fileCount} = [outdataFilePrfx,'_n',...
+        num2str(fileCount),'shps_C'];
+end
 % fidShpsOutFileList = fopen([outdataFilePrfx,'shpsoutFilesList.txt'],'r');
 %% Constuct job file for Launcher
 fidJbFile = fopen([jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfile.txt'],'w');
 disp(['Job File: ',jobParams.jobName,'_jbfile.txt',' file created in ',jobParams.scrtchDir,filesep])
 %Store list of output files in .txt file for post-processing codes
-fidOutFileList = fopen([outdataFilePrfx,'outFilesList.txt'],'w');
-disp(['Output File list created in ',outdataFilePrfx])
+fidOutFileList = fopen([outdataFilePrfx,'_outFilesList.txt'],'w');
+disp(['Output File list created: ',outdataFilePrfx,'_outFilesList.txt'])
 
 nJobs = 1;
-for nCount = 1:2
-    
-%     if nCount == 1
-%         fid = fidbasicsJbFile;
-%     end
-    %  PSO and drase command on input file.
-    fprintf(fidJbFile,'matlab -batch ');
-    %path to jsonlab,
-    fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
-    %path to DRASE
-    fprintf(fidJbFile,' addpath ''%s''; ', jobParams.path2drase);
-    %path to SHAPES, PSO, and project
-    fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
-
-    switch nCount
-        case 1
-            fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
-                [paramsFile,'.mat'],dataFile); %pwelch ')
-            fprintf(fidOutFileList,'%s\n',dataFile);
-        case 2
-%             fprintf(fid,' setpath(''%s''); ', jobParamsFile);
-            fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
-                [paramsFileshps,'.mat'],shpsDataFile); %shps on pwelch ')
-            fprintf(fidOutFileList,'%s\n',shpsDataFile);
+for nCount = 1:fileCount
+    for runType = 1:2
+        %  PSO and drase command on input file.
+        fprintf(fidJbFile,'matlab -batch ');
+        %path to jsonlab,
+        fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
+        %path to DRASE
+        fprintf(fidJbFile,' addpath ''%s''; ', jobParams.path2drase);
+        %path to SHAPES, PSO, and project
+        fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
+        %Call to matched filtering code
+        switch runType
+            case 1 %pwelch run
+                fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
+                    paramsFileList{nCount},dataFileList{nCount});
+            case 2 %shapes run
+                fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
+                    paramsFileshpsList{nCount},shpsDataFileList{nCount});           
+        end
+        % Count number of jobs
+        nJobs = nJobs + 1;
     end
-    %     Count number of jobs
-    nJobs = nJobs + 1;
+    fprintf(fidOutFileList,'%s  %s\n',...
+        dataFileList{nCount},...
+        shpsDataFileList{nCount});
+        
 end
 % fclose(fidOutFileList);
 fclose(fidJbFile);

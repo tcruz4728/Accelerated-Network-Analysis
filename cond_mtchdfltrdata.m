@@ -18,7 +18,7 @@ kNyq = floor(params.N/2)+1;
 % Load data
 % switch datatype
 %     case 1 %'welch'
-load(inputFile,"interpPSD","sampFreq","dataY","freqBnd",'tlen'); %Welchs PSD
+load(inputFile,"interpPSD","sampFreq","dataY","freqBnd",'tlen'); %PSD
 % %     case 2 %'shps'
 % %         load(jobParams.inFileshpsPSD,'interpPSD','sampFreq',"dataY","freqBnd",'tlen') %SHAPES estimated Welchs PSD
 % % end
@@ -62,4 +62,5 @@ if nargout > 0
 end
 % save(jobParams.outFileData,"fftdataYbyPSD",'TFtotal','dataY');
 save(paramsFileName,'params','-append')
+disp(['cond_mtchdfltrdata- Parameters MaJ with conditioned data and saved to: ',paramsFileName])
 end

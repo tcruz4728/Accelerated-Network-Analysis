@@ -15,20 +15,18 @@ switch psoParams.type
 end
 % filetagstr = [psoParams.type,'_'];
 
-for  lp=1:6
+for  lp=1:5
     switch lp
         case 1
             filetagstr = [filetagstr,'fs',num2str(signalParams.sampling_freq)];
         case 2
-            filetagstr = [filetagstr,'N',num2str(psoParams.maxSteps)];
+            filetagstr = [filetagstr,'stp',num2str(psoParams.maxSteps)];
         case 3
-            filetagstr = [filetagstr,'tsl',num2str(signalParams.signal.T_sig_len)];
+            filetagstr = [filetagstr,'tsL',num2str(signalParams.signal.T_sig_len)];
         case 4
-            filetagstr = [filetagstr, 'Tin',num2str(signalParams.ta)];
+            filetagstr = [filetagstr, 'ta',num2str(signalParams.ta)];
         case 5
-            filetagstr = [filetagstr, 'SNR',num2str(signalParams.snr)];
-        case 6
-            filetagstr = [filetagstr,'_'];
+            filetagstr = [filetagstr, 'snr',num2str(signalParams.snr)];
     end
 end
 

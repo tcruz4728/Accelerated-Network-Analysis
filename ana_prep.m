@@ -103,7 +103,8 @@ if ~isempty(progCtrl) && progCtrl == 1
 end
 %% GW Parameter settings - combines relevant settings and performs necessary 
 % computations for rungwpso. Does not require time-series or PSD data
-    progstatus(proglines.c,fidprog,progCtrl)
+    if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.c,fidprog,progCtrl); end
 gwpsoparams(psoParams,signalParams,paramsFile);
 copyfile([paramsFile,'.mat'],[paramsFileshps,'.mat']); %identical but separate parameter settings
-    progstatus(proglines.nd,fidprog,progCtrl)
+    if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl)
+        fclose(fidprog); end

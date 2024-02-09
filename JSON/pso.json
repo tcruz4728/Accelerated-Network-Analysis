@@ -1,5 +1,5 @@
 {
 "type": 2,
-"maxSteps": 500,
+"maxSteps": 5,
 "nRuns": 8
 }
