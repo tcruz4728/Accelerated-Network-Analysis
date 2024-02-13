@@ -17,16 +17,22 @@ outFileNameList = cell(jobParams.inFileDataRange(2),1);
 paramsFileList = cell(jobParams.inFileDataRange(2),1);
 paramsFileshpsList = cell(jobParams.inFileDataRange(2),1);
 for fileCount = 1:jobParams.inFileDataRange(2)
+    %Time series initial file
     inFileNameList{fileCount} = [jobParams.inFileDataPrFx,...
         num2str(fileCount),'.mat'];
+    %Pwelch data file (inFilePSD-goes into SHAPES)
     interFileNameList{fileCount} = [interFilePath,filesep,...
         interFileName,'_n',num2str(fileCount),'.mat'];
+    %SHAPES estimated PSD data file (inFileshpsPSD)
     outFileNameList{fileCount} = [outFilePath,filesep,...
         outFileName,'_n',num2str(fileCount),'.mat'];
+    %Pwelch params files
     paramsFileList{fileCount} = [paramsFile,'_n',...
         num2str(fileCount),'.mat'];
+    %SHAPES params files
     paramsFileshpsList{fileCount} = [paramsFileshps,'_n',...
         num2str(fileCount),'.mat'];
+    %Copying root file to others, calculated params do not change
     copyfile([paramsFile,'.mat'],paramsFileList{fileCount});
     copyfile([paramsFileshps,'.mat'],paramsFileshpsList{fileCount});
 end
@@ -37,6 +43,8 @@ disp(['Job File created: ',jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfil
 %Store list of output files in .txt file for post-processing codes
 fidOutFileList = fopen([outdataFilePrfx,'_inFilesList.txt'],'w');
 disp(['Input File list created: ',outdataFilePrfx,'_inFilesList.txt'])
+fidparamsFileList = fopen([outdataFilePrfx,'_paramsFilesList.txt'],'w');
+disp(['Parameter File list created: ',outdataFilePrfx,'_paramsFilesList.txt'])
 
 nJobs = 1;
 for nCount = 1:fileCount
@@ -67,6 +75,8 @@ for nCount = 1:fileCount
     fprintf(fidOutFileList,'%s  %s  %s\n',...
         inFileNameList{nCount},interFileNameList{nCount},...
         outFileNameList{nCount});
+    fprintf(fidparamsFileList,'%s  %s\n',...
+        paramsFileList{nCount},paramsFileshpsList{nCount});
     nJobs = nJobs +1;
 end
 fclose(fidJbFile);
