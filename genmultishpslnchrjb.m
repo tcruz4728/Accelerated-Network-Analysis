@@ -60,7 +60,7 @@ for nCount = 1:fileCount
         inFileNameList{nCount},interFileNameList{nCount});
     %SHAPES call 
     fprintf(fidJbFile,' run_drase4lines(''%s'',''%s'',''%s'',''%s''); ',...
-        jobParamsFile,num2str(varargin{1}),interFileNameList{nCount},outFileNameList{nCount});
+        jobParamsFile,outdataFilePrfx,interFileNameList{nCount},outFileNameList{nCount});
     %PSD Interpolation
     fprintf(fidJbFile,' createPSD(''%s''); ',... welch
         interFileNameList{nCount});
