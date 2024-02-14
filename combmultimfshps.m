@@ -23,7 +23,7 @@ function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
 % Modified from combsplitlinesshps to work with ANA data
 
 %Add path to JSONLAB
-addpath(path2jsonlab);
+% addpath(path2jsonlab);
 
 %Nx3 Cell Array with inFileData, inFilePSD, and inFileshpsPSD paths
 inFilesList = readcell(inFileList,"Delimiter","  ");
