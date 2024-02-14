@@ -1,4 +1,4 @@
-function combmultimfshps(path2jsonlab,jobParamsFile,userUID,varargin)
+function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
 %COMBMULTIMFSHPS(J,F,U)
 %Post-job function to combine data for PC download.
 %J is the path to the jsonlab package. If set to '', the jsonlab package is
@@ -20,36 +20,15 @@ function combmultimfshps(path2jsonlab,jobParamsFile,userUID,varargin)
 %
 %U is the userUID that was set for the GENMULTISHPSLNCHRJB.m
 
-
 % Modified from combsplitlinesshps to work with ANA data
 
 %Add path to JSONLAB
 addpath(path2jsonlab);
 
-%Load job description
-jobParams = loadjson(jobParamsFile);
-
-
-
-datad = date;
-%Override the file name if optional input given
-nreqArgs = 3;
-for lpargs = 1:(nargin-nreqArgs)
-    if ~isempty(varargin{lpargs})
-        switch lpargs
-            case 1
-                datad = varargin{lpargs};
-        end
-    end
-end
-
-[~,outdataFilePrfx] = ana_prep(jobParams,userUID,datad,[],1);
-% paramsFileshps = [paramsFile,'shps'];
-
 %Nx3 Cell Array with inFileData, inFilePSD, and inFileshpsPSD paths
-inFilesList = readcell([outdataFilePrfx,'_inFilesList.txt'],"Delimiter","  ");
+inFilesList = readcell(inFileList,"Delimiter","  ");
 %Nx2 Cell Array with dataFile and shpsdataFile paths
-outFilesList = readcell([outdataFilePrfx,'_outFilesList.txt'],"Delimiter","  ");
+outFilesList = readcell(outFileList,"Delimiter","  ");
 %Nx2 Cell Array with params and paramsshps paths
 % paramsFilesList = readcell([outdataFilePrfx,'_paramsFilesList.txt'],"Delimiter","  ");
 
@@ -60,18 +39,13 @@ interFileNameList = inFilesList{:,2};
 %SHAPES estimated PSD data file (inFileshpsPSD)
 outFileNameList = inFilesList{:,3};
 
-% %Pwelch params files
-% paramsFileList = paramsFilesList{:,1};
-% %SHAPES params files
-% paramsFileshpsList = paramsFilesList{:,2};
-
 %Outgoing data files
 dataFileList = outFilesList{:,1};
 shpsDataFileList = outFilesList{:,2};
 
 %% Data Loop 
-combData = cell(jobParams.inFileDataRange(2),5);
-for fileCount = 1:jobParams.inFileDataRange(2)
+combData = cell(length(inFilesList),5);
+for fileCount = 1:length(inFilesList)
     %Input Data
     inputData = load(inFileNameList{fileCount});
 
