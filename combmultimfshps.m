@@ -44,10 +44,11 @@ dataFileList = outFilesList{:,1};
 shpsDataFileList = outFilesList{:,2};
 
 %% Data Loop 
-combData = cell(length(inFilesList),5);
-if length(inFilesList)>1
+nFiles = length(outFilesList);
 
-    for fileCount = 1:length(inFilesList)
+combData = cell(nFiles,5);
+if nFiles>1
+    for fileCount = 1:nFiles
         %Input Data
         inputData = load(inFileNameList{fileCount});
 
