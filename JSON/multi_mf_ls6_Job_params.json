@@ -14,7 +14,7 @@
 "signalParamsjson":"signal.json",
 "injSig":"",
 "accessctrl":"sep",
-"jbTime": 1,
+"jbTime": 2,
 "nNodes": 1,
 "nJbsPerNode": 2,
 "qType":"normal",
