@@ -29,23 +29,21 @@ function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
 inFilesList = readcell(inFileList,"Delimiter","  ");
 %Nx2 Cell Array with dataFile and shpsdataFile paths
 outFilesList = readcell(outFileList,"Delimiter","  ");
-%Nx2 Cell Array with params and paramsshps paths
-% paramsFilesList = readcell([outdataFilePrfx,'_paramsFilesList.txt'],"Delimiter","  ");
+
+nFiles = min(size(outFilesList,1),size(inFilesList,1));
 
 %Time series initial file
-inFileNameList = inFilesList(:,1)
+inFileNameList = inFilesList(nFiles,1)
 %Pwelch data file (inFilePSD-goes into SHAPES)
-interFileNameList = inFilesList(:,2)
+interFileNameList = inFilesList(nFiles,2)
 %SHAPES estimated PSD data file (inFileshpsPSD)
-outFileNameList = inFilesList(:,3)
+outFileNameList = inFilesList(nFiles,3)
 
 %Outgoing data files
-dataFileList = outFilesList{:,1}
-shpsDataFileList = outFilesList{:,2}
+dataFileList = outFilesList{nFiles,1}
+shpsDataFileList = outFilesList{nFiles,2}
 
 %% Data Loop 
-nFiles = size(outFilesList,1);
-
 combData = cell(nFiles,5);
 if nFiles>1
     for fileCount = 1:nFiles
