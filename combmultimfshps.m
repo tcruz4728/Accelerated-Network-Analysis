@@ -33,7 +33,7 @@ outFilesList = readcell(outFileList,"Delimiter","  ");
 % paramsFilesList = readcell([outdataFilePrfx,'_paramsFilesList.txt'],"Delimiter","  ");
 
 %Time series initial file
-inFileNameList = inFilesList{:,1};
+inFileNameList = inFilesList{:,1}
 %Pwelch data file (inFilePSD-goes into SHAPES)
 interFileNameList = inFilesList{:,2};
 %SHAPES estimated PSD data file (inFileshpsPSD)
