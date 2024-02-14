@@ -45,40 +45,23 @@ shpsDataFileList = outFilesList(nFiles,2)
 
 %% Data Loop 
 combData = cell(nFiles,5);
-if nFiles>1
-    for fileCount = 1:nFiles
-        %Input Data
-        inputData = load(inFileNameList{fileCount});
 
-        %PSD Data and interpolated PSD data
-        psdData = load(interFileNameList{fileCount}); %pwelch psd and highpassed time series
-        estpsdData = load(outFileNameList{fileCount}); %estimated PSD and sampFreq only
-
-        %Rungwpso Data
-        outData = load(dataFileList{fileCount});
-        estoutData = load(shpsDataFileList{fileCount});
-        combData{fileCount} = {inputData,psdData,estpsdData,outData,estoutData};
-        save([outdataFilePrfx,'_n',num2str(fileCount),'F.mat'],...
-            "inputData","psdData","estpsdData","outData","estoutData");
-        disp(['combmultimfshps- Saved individual run to ',...
-            outdataFilePrfx,'_n',num2str(fileCount),'F.mat'])
-    end
-else
+for fileCount = 1:nFiles
     %Input Data
-    inputData = load(inFileNameList);
+    inputData = load(inFileNameList{fileCount});
 
     %PSD Data and interpolated PSD data
-    psdData = load(interFileNameList); %pwelch psd and highpassed time series
-    estpsdData = load(outFileNameList); %estimated PSD and sampFreq only
+    psdData = load(interFileNameList{fileCount}); %pwelch psd and highpassed time series
+    estpsdData = load(outFileNameList{fileCount}); %estimated PSD and sampFreq only
 
     %Rungwpso Data
-    outData = load(dataFileList);
-    estoutData = load(shpsDataFileList);
-    combData = {inputData,psdData,estpsdData,outData,estoutData};
-    save([outdataFilePrfx,'_n1F.mat'],...
+    outData = load(dataFileList{fileCount});
+    estoutData = load(shpsDataFileList{fileCount});
+    combData{fileCount} = {inputData,psdData,estpsdData,outData,estoutData};
+    save([outdataFilePrfx,'_n',num2str(fileCount),'F.mat'],...
         "inputData","psdData","estpsdData","outData","estoutData");
     disp(['combmultimfshps- Saved individual run to ',...
-        outdataFilePrfx,'_n1F.mat'])
+        outdataFilePrfx,'_n',num2str(fileCount),'F.mat'])
 end
 save([outdataFilePrfx,'F.mat'],"combData");
 disp(['combmultimfshps- Saved combined runs to ',...
