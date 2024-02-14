@@ -26,9 +26,9 @@ function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
 % addpath(path2jsonlab);
 
 %Nx3 Cell Array with inFileData, inFilePSD, and inFileshpsPSD paths
-inFilesList = readcell(inFileList,"Delimiter","  ")
+inFilesList = readcell(inFileList,"Delimiter","  ");
 %Nx2 Cell Array with dataFile and shpsdataFile paths
-outFilesList = readcell(outFileList,"Delimiter","  ")
+outFilesList = readcell(outFileList,"Delimiter","  ");
 %Nx2 Cell Array with params and paramsshps paths
 % paramsFilesList = readcell([outdataFilePrfx,'_paramsFilesList.txt'],"Delimiter","  ");
 
@@ -44,7 +44,7 @@ dataFileList = outFilesList{:,1};
 shpsDataFileList = outFilesList{:,2};
 
 %% Data Loop 
-nFiles = length(outFilesList);
+nFiles = size(outFilesList,1);
 
 combData = cell(nFiles,5);
 if nFiles>1
