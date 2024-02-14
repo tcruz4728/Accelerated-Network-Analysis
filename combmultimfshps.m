@@ -26,18 +26,18 @@ function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
 % addpath(path2jsonlab);
 
 %Nx3 Cell Array with inFileData, inFilePSD, and inFileshpsPSD paths
-inFilesList = readcell(inFileList,"Delimiter","  ")
+inFilesList = readcell(inFileList,"Delimiter","  ");
 %Nx2 Cell Array with dataFile and shpsdataFile paths
 outFilesList = readcell(outFileList,"Delimiter","  ");
 %Nx2 Cell Array with params and paramsshps paths
 % paramsFilesList = readcell([outdataFilePrfx,'_paramsFilesList.txt'],"Delimiter","  ");
 
 %Time series initial file
-inFileNameList = inFilesList{:,1};
+inFileNameList = inFilesList(:,1);
 %Pwelch data file (inFilePSD-goes into SHAPES)
-interFileNameList = inFilesList{:,2};
+interFileNameList = inFilesList(:,2);
 %SHAPES estimated PSD data file (inFileshpsPSD)
-outFileNameList = inFilesList{:,3};
+outFileNameList = inFilesList(:,3);
 
 %Outgoing data files
 dataFileList = outFilesList{:,1};
