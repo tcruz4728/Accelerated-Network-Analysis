@@ -44,7 +44,7 @@ dataFileList = outFilesList{:,1};
 shpsDataFileList = outFilesList{:,2};
 
 %% Data Loop 
-nFiles = length(outFilesList);
+nFiles = length(outFilesList)
 
 combData = cell(nFiles,5);
 if nFiles>1
