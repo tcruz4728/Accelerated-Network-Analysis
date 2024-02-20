@@ -6,6 +6,7 @@ datad = input("Date of Data (leave empty for current): ");
 progCtrl = input("For a progress file, type 1: ");
 path2jsonlab = 'C:\Users\tcruz\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\JSONLab_ a toolbox to encode_decode JSON files\jsonlab-2.0';
 addpath(path2jsonlab)
+addpath("References\")
 %Job File 
 jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\mf_PC_Job_params.json';
 %Load job parameters

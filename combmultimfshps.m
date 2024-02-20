@@ -33,15 +33,15 @@ outFilesList = readcell(outFileList,"Delimiter","  ");
 nFiles = min(size(outFilesList,1),size(inFilesList,1));
 
 %Time series initial file
-inFileNameList = inFilesList(nFiles,1)
+inFileNameList = inFilesList(nFiles,1);
 %Pwelch data file (inFilePSD-goes into SHAPES)
-interFileNameList = inFilesList(nFiles,2)
+interFileNameList = inFilesList(nFiles,2);
 %SHAPES estimated PSD data file (inFileshpsPSD)
-outFileNameList = inFilesList(nFiles,3)
+outFileNameList = inFilesList(nFiles,3);
 
 %Outgoing data files
-dataFileList = outFilesList(nFiles,1)
-shpsDataFileList = outFilesList(nFiles,2)
+dataFileList = outFilesList(nFiles,1);
+shpsDataFileList = outFilesList(nFiles,2);
 
 %% Data Loop 
 combData = cell(nFiles,5);

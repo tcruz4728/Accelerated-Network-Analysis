@@ -1,19 +1,66 @@
-% anabasics - bare bones from initial setup and before call to rungwpso
 function [paramsFile,outdataFilePrfx,varargout] = ana_basics(jobParams,userUID,varargin)
-% Optional input Arguments 
+% [P,Y] = ANA_BASICS(J,U)
+%Inputs
+% J- Job's parameter json file path or MATLAB structure which contains
+% pathing for data and JSON files. Required fields are defined below:
+%   {
+% "jobName":"<a name for this job which will become the prefix for file
+%            names>",
+% "path2project":"<path to the project directory>",
+% "path2drase":"<path to the DRASE directory>",
+% "path2pso":"<path to the PSO directory>",
+% "path2shapes":"<path to the SHAPES directory>",
+% "inFilePSD":"<path to the file containing pwelch PSD training data>",
+% "inFileshpsPSD":"<path to the file containing SHAPES estimated PSD
+% training data>",
+% "outFilePSD":"<path to the file containing pwelch PSD training data to be
+% run by rungwpso>",
+% "outFileshpsPSD":"<path to the file containing SHAPES estimated PSD training
+% data to be run by rungwpso>",
+% "inFileData":"<path to the file containing detector strain data>",
+% "outDir":"<path to directory where all output files will be stored, a
+% subdirectory for the date is created under this directory. A subdirectory
+% under outDir/<date> with a UID>",
+% "scrtchDir": <path to directory where all temporary files, e.g., SLURM
+%               file, will be stored>",
+% (REQUIRED FOR RUNNING SHAPES)
+% "genDataParamsjson":"<path to JSON file containing parameters for
+%                generating line data>",
+% "draseParamsFile":"<path to JSON file containing parameters for each
+%                SHAPES run using drase>",
+% }
+% U- Specifies the user identification number for file indexing beyond
+% date. See DRASE\mkdirUID.m for more information. 
+%Outputs
+% P- Parameter file containing necessary fields for rungwpso. Contains
+% structure 'params' defined in gwpsoparams.m.
+% Y- Output File Naming Prefix defined by J.outDir,J.jobName, and output
+% from gwpsoparams.m
+%Optional input Arguments 
 % [P,Y] = ana_basics(J,U,D,E,C,T)
-% Setting D allows the user to set a specific date for folder creation
-% This could be used to pull data from a specific date if E is not empty,
-% or overwride pre-existing data if it is. E, if specified, returns the
-% function after only writing file strings for P and Y.
-% C controls whether or not a progress.txt file is generated for the run, 1 is yes, else is no.
-% Optional outputs. T is the plotting control option, default is no plot, 
-% setting '1' generates a spectrogram of the training series, '2' generates 
-% the PSD curve and '12' generates both.
-% Optional output Arguments
+% D- Allows the user to specify date for folder indexing.
+%   If =<non-existing date>, creates new folder for specified date.
+%   If =<pre-existing date>, overwrites pre-existing data in folder.
+% E- Returns the function earlier after completing certain functions.     
+%   If =1, returns after only writing file strings for P and Y,
+%   If =2, returns after =1's response and creating parameter files.
+% C- Controls whether or not a progress.txt file is generated for the run.
+%   If =1, progress file is generated.
+%   Else, (DEFAULT) no progress file is generated.
+% T- Plotting control option,
+%   If =1, Glitch spectrogram of the training series is plotted
+%   Elseif =2, Pwelch PSD training segment is plotted
+%   Elseif =12, Both 1's and 2's are plotted,
+%   Else, (DEFAULT) No plots are generated. 
+%
+%Optional output Arguments
 % [P,Y,F,N] = ana_basics(J,U,D,E,C,T)
-% F returns a structure of file paths directories for figures, PSDs, and
-% end files. N is the full filename of the progress.txt file. 
+% F- Returns a structure of file paths directories for figures, PSDs, and
+% end files as defined in DRASE\dpfc.m 
+% N- Returns the full filename of the progress.txt file (if generated). 
+%
+% See also GWPSOPARAMS, FILETAGANA, DRASE\MKDIRUID, DRASE\DRASE.
+
 %% jobParams datatype check - checks for whether jobParams is a structure, else assumes a file
 if ~isstruct(jobParams)
     jobParams = loadjson(jobParams);
@@ -61,7 +108,7 @@ filetagstr = filetagana(psoParams,signalParams);
 outdataFilePrfx = [outDir,jobParams.jobName,'_',filetagstr];
 
 % Quick stop for partial runs, namely for setting file conventions
-if ~isempty(anabreak)
+if ~isempty(anabreak) && anabreak == 1
     return
 end
 
@@ -72,7 +119,7 @@ if ~isempty(progCtrl) && progCtrl == 1
     fidprog = fopen(progressFile,'a');
     disp(['ana_basics- Progress File created: ',progressFile])
     proglines = struct('nd','done.',...
-    't',datestr(datetime('now')),... %fprintf(fidprog,'%s\n',datestr(datetime('now')));
+    't',char(datetime("today")),... %fprintf(fidprog,'%s\n',datestr(datetime('now')));
     'c','Computing Parameters...',...
     'l','Loading Data...',...
     'd','Running Drase...',...
@@ -83,10 +130,13 @@ if ~isempty(progCtrl) && progCtrl == 1
 end
 %% GW Parameter settings - combines relevant settings and performs necessary 
 % computations for rungwpso. Does not require time-series or PSD data
-    progstatus(proglines.c,fidprog,progCtrl)
+    if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.c,fidprog,progCtrl); end
 gwpsoparams(psoParams,signalParams,paramsFile);
 copyfile([paramsFile,'.mat'],[paramsFileshps,'.mat']); %identical but separate parameter settings
-    progstatus(proglines.nd,fidprog,progCtrl)
+    if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.c,fidprog,progCtrl); end
+if ~isempty(anabreak) && anabreak == 2
+    return
+end
 %% Data Load - loads time-series performs bandpass, computes training segment PSD
 % input: inFileData - time series data from LIGO or simulations
 % output: inFilePSD - training segment PSD
@@ -117,7 +167,7 @@ end
 % input: inFilePSD - training segment PSD from load_mtchdfltrdata.m
 % output: inFileshpsPSD - shapes estimation of training segment PSD
     progstatus(proglines.d,fidprog,progCtrl)
-run_drase4lines(jobParams,userUID);
+run_drase4lines(jobParams,outdataFilePrfx);
     progstatus(proglines.nd,fidprog,progCtrl)
 
 %% Interpolation - Takes log10 of PSDs, interpolates and inverses the log 

@@ -1,5 +1,7 @@
-function boundary_fig = boundary_plot
+function boundary_fig = boundary_plot(gwCoefs)
 %% Plots in the m1, m2 space and the Tau1.5 and Tau0 space
+% Places the parameters gwCoefs(1) and gwCoefs(2) within the boundary space
+% plot
 
 %Constants
 c = 299792458;
@@ -60,9 +62,20 @@ Tau0 = [tau0_1, tau0_2, tau0_3];
 Tau1p5 = [tau1p5_1, tau1p5_2, tau1p5_3];
 
 %Scatterplot
-sz = 5;
-c = 'black';
-boundary_fig = scatter(Tau0, Tau1p5,sz,c,"filled", 'DisplayName','Tau Space Boundary');
+spcBndSz = 5;
+spcBndClr = 'black';
+boundary_fig = scatter(Tau0, Tau1p5,spcBndSz,spcBndClr,...
+    "filled", 'DisplayName','Tau Space Boundary');
+hold on;
+paramSz = 140;
+paramClr = 'red';
+scatter(gwCoefs(1),gwCoefs(2),paramSz,paramClr,...
+    'filled','D','DisplayName','Original Parameters');
+title("Best Parameter Values for All Runs");
+xlabel("\tau_0");
+ylabel("\tau_{1.5}");
+legend;
+hold off
 % xlabel('\tau_0');
 % ylabel('\tau_{1.5}');
 % title("Boundary of Region of Physical Parameters in \tau_0 and \tau_{1.5} Space");

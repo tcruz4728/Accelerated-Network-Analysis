@@ -1,8 +1,68 @@
-% rungwpso setup script
 function varargout = gwpsoparams(psoParams,signalParams,varargin)
-% if jobParams.injSig == 1
-%     signalParams = loadjson(jobParams.signalParamsjson);
-% end
+% GWPSOPARAMS(P,S)- computes parameters for use in rungwpso and saves
+% params.mat file.
+% P- PSO parameter structure containing the following fields
+%   {
+%   "type": "<Parameter space controller, =1 for mass space, =2 for tau space>",
+%   "maxSteps": <Number of PSO iterations used in rungwpso's pso call>,
+%   "nRuns": <Number of computing cores used in rungwpso's pso call>
+%       }
+% S- Signal parameter structure defining the parameters of the time series
+% data or to define the parameters of an injected signal. Contains the
+% following fields
+%   {{
+%   "sampling_freq": <sampling frequency of signal in Hz>,
+%   "ta": <signal's time of arrival in seconds>,
+%   "snr": <signal-to-noise ratio of time series data>,
+%   "r":<distance between gw sources in parsecs>,
+%   "phase": <phase difference of signal>,
+%   "masses": <1x2 array defining the masses of gw sources>,
+%   },
+%   "signal": 
+%     {
+%       "T_sig_len": <total time series length in seconds>,
+%       "T_sig": <length of signal in seconds>,
+%       "num": 1,
+%       "noise": 1
+%       }
+%   }
+%Optional arguments
+% D = GWPSOPARAMS(P,S,O)
+% 
+% O- Output filename for file containing 'params' structure, if unspecified
+% file name will be 'params.mat'.
+% 
+% D- Returns 'params' structure.
+% 
+% 'params' structure has the following fields
+% 
+% 'dataX'-          time series integer vector of x data
+% 'fpos'-           Positive frequency vector
+% 'dataY'-          time series vector of y data, must be row vector.
+% 'fftdataYbyPSD'-  FFT of data Y by PSD, computed by cond_mtchdfltrdata,
+%                   must be row vector
+% 'frange'-         Ranged of frequency values
+% 'datalen'-        length of data in seconds
+% 'initial_phase'-  initial phase of signal
+% 'N'-              Total number of data samples in segment
+% 'A'-              Computed amplitude magnitude frequency vector
+% 'phaseDiff'-      Computed phase difference vector for quadrature
+%                   templates
+% 'normfac'-        Normalization factor
+% 'avec'-           Matrix containing alpha terms used for waveform
+%                   generation
+% 'T_sig'-          Length of signal in seconds
+% 'rmin'-           GW source minimum separation distance (from theory)
+% 'rmax'-           GW source maximum separation distance (from theory)
+% 'Fs'-             Sampling Frequency
+% 'cgFac'-          Speed of light cubed and gravitational constant factor
+% 'Msolar'-         Mass of Sun in kg
+% 'signal'-         signalParams parameter structure
+% 'pso'-            psoParams parameter structure
+% 'gwCoefs'-        Gravitional wave coefficients, either masses or chirp
+%                   times
+%
+% See also rungwpso, cond_mtchdfltrdata.
 
 % Parameter Structure
 T_sig_len = signalParams.signal.T_sig_len; %Length of signal in seconds
@@ -72,4 +132,6 @@ if nargout>0
 end
 if nargin >2
     save(varargin{1},'params','psoParams','signalParams','gwCoefs')
+else 
+    save('params.mat','params','psoParams','signalParams','gwCoefs')
 end

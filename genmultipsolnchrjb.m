@@ -57,7 +57,8 @@ addpath(path2jsonlab);
 jobParams = loadjson(jobParamsFile);
 
 %Optionals for ana_basics setup
-datad = date;
+userUID = 1;
+datad = [];
 %Override the file name if optional input given
 nreqArgs = 2;
 for lpargs = 1:(nargin-nreqArgs)
@@ -74,7 +75,7 @@ end
 % progCtrl = 1; % Always set to on for debugging
 
 %% ANA prep package
-[paramsFile,outdataFilePrfx] = ana_prep(jobParams,userUID,datad,[],1);
+[paramsFile,outdataFilePrfx] = ana_basics(jobParams,userUID,datad,[],1);
 paramsFileshps = [paramsFile,'shps'];
 paramsFileList = cell(jobParams.inFileDataRange(2),1);
 paramsFileshpsList = cell(jobParams.inFileDataRange(2),1);
