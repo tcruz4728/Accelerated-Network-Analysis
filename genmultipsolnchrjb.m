@@ -1,11 +1,11 @@
 function [] = genmultipsolnchrjb(path2jsonlab,jobParamsFile,varargin)
 %GENMULTIPSOLNCHRJB(J,P)
-%Generates a .slurm file containing a LAUNCHER job for SHAPES estimated
-%matched filtering. J is the path to the jsonlab package. If set to
-%'', the jsonlab package is assumed to be in the Matlab search path. Note
-%that this search path must be accessible from every compute node, which
-%cannot always be guaranteed. Hence it is safer to specify the path
-%explicitly.
+%Generates a .slurm file containing a LAUNCHER job for matched filtering of
+%both pwelch PSDs and SHAPES estimated PSDs. J is the path to the jsonlab
+%package. If set to '', the jsonlab package is assumed to be in the Matlab
+%search path. Note that this search path must be accessible from every
+%compute node, which cannot always be guaranteed. Hence it is safer to
+%specify the path explicitly.
 %
 %P is a JSON file containing the following job parameters. Text in <>
 %should be replaced by an appropriate value. Examples are shown for some of
@@ -17,26 +17,30 @@ function [] = genmultipsolnchrjb(path2jsonlab,jobParamsFile,varargin)
 % "path2drase":"<path to the DRASE directory>",
 % "path2pso":"<path to the PSO directory>",
 % "path2shapes":"<path to the SHAPES directory>",
-% "inFilePSD":"<path to the file containing pwelch PSD training data>",
+% "inFileDataPrfx":"<file prefix and location of data realizaitons>",
+% "inFileDataRange":"<1x2 array giving the range of values from which the
+%       full file names of data realizations, i.e. [1, 5] will have 5 data
+%       realizations loaded in and estimated.>",
+% "inFilePSD":"<path to the file containing the pwelch estimated PSD
+%       training data>",
 % "inFileshpsPSD":"<path to the file containing SHAPES estimated PSD
-% training data>",
-% "outFilePSD":"<path to the file containing pwelch PSD training data to be
-% run by rungwpso>",
-% "outFileshpsPSD":"<path to the file containing SHAPES estimated PSD training
-% data to be run by rungwpso>",
-% "inFileData":"<path to the file containing detector strain data>",
+%       training data>",
 % "outDir":"<path to directory where all output files will be stored, a
-% subdirectory for the date is created under this directory. A subdirectory
-% under outDir/<date> with a UID>",
+%       subdirectory for the current date is created under this directory. 
+%       Another subdirectory under outDir/<date> with a UID is also set.>",
 % "scrtchDir": <path to directory where all temporary files, e.g., SLURM
-%               file, will be stored>",
-% "genDataParamsjson":"<path to JSON file containing parameters for
-%                generating line data>",
-% "draseParamsFile":"<path to JSON file containing parameters for each
-%                SHAPES run using drase>",
-% "jbTime": <Time per Matlab job in hours>,
-% "nNodes": <Number of compute nodes for this job>,
-% "qType":"<job queue: leave empty for default/ls6,skx-normal for stampede2>",
+%       files, job text files, will be stored>",
+% "psoParamsjson":"<path to JSON file containing parameters for rungwpso's
+%       PSO run.>",
+% "signalParamsjson":"<path to JSON file containing parameters for a
+%       realized signal or an injected signal>",
+% "injSig":"<Injection signal control parameter, if empty no signal
+%       injection is performed, else the injected signal will have 
+%       parameters set by signalParams.json>",
+% "jbTime":"<Time per Matlab job in hours>",
+% "nNodes":"<Number of compute nodes for this job>",
+% "qType":"<job queue: leave empty for default/ls6,skx-normal for 
+%       stampede2>",
 % "email":"<email address>"
 %   }
 % }
@@ -75,7 +79,7 @@ end
 % progCtrl = 1; % Always set to on for debugging
 
 %% ANA prep package
-[paramsFile,outdataFilePrfx] = ana_basics(jobParams,userUID,datad,[],1);
+[paramsFile,outdataFilePrfx] = ana_basics(jobParams,userUID,datad,1);
 paramsFileshps = [paramsFile,'shps'];
 paramsFileList = cell(jobParams.inFileDataRange(2),1);
 paramsFileshpsList = cell(jobParams.inFileDataRange(2),1);
@@ -127,7 +131,7 @@ for nCount = 1:fileCount
         shpsDataFileList{nCount});
         
 end
-% fclose(fidOutFileList);
+fclose(fidOutFileList);
 fclose(fidJbFile);
 %% Slurm file generation
 % genslurm(jobParams,nJobs,anabasicsstr,1,0.5)

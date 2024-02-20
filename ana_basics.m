@@ -1,5 +1,11 @@
 function [paramsFile,outdataFilePrfx,varargout] = ana_basics(jobParams,userUID,varargin)
 % [P,Y] = ANA_BASICS(J,U)
+% This function uses the job parameters defined in J and the UID U to
+% produce the parameter files P and defines the output file prefix which
+% files will be saved with. The program loads in time series data with
+% load_mtchdfltrdata and saves a PSD training segment to be estimated by
+% SHAPES and then conditions the PSD and SHAPES estimated PSD for use in
+% matched filtering analysis with rungwpso.m.
 %Inputs
 % J- Job's parameter json file path or MATLAB structure which contains
 % pathing for data and JSON files. Required fields are defined below:

@@ -13,7 +13,6 @@
 "psoParamsjson":"pso.json",
 "signalParamsjson":"signal.json",
 "injSig":"",
-"accessctrl":"sep",
 "jbTime": 2,
 "nNodes": 1,
 "nJbsPerNode": 2,

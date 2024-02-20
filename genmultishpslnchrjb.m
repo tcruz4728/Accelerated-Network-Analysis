@@ -1,11 +1,11 @@
 function [outFileNameList] = genmultishpslnchrjb(path2jsonlab,jobParamsFile,varargin)
 %GENMULTISHPSLNCHRJB(J,P)
-%Generates a .slurm file containing a LAUNCHER job for SHAPES estimated
-%matched filtering. J is the path to the jsonlab package. If set to
-%'', the jsonlab package is assumed to be in the Matlab search path. Note
-%that this search path must be accessible from every compute node, which
-%cannot always be guaranteed. Hence it is safer to specify the path
-%explicitly.
+%Generates a .slurm file containing a LAUNCHER job for matched filtering
+%data loading, conditioning, and estimating pwelch PSDs using SHAPES.
+%J is the path to the jsonlab package. If set to '', the jsonlab package is
+%assumed to be in the Matlab search path. Note that this search path must
+%be accessible from every compute node, which cannot always be guaranteed.
+%Hence it is safer to specify the path explicitly.
 %
 %P is a JSON file containing the following job parameters. Text in <>
 %should be replaced by an appropriate value. Examples are shown for some of
@@ -15,38 +15,47 @@ function [outFileNameList] = genmultishpslnchrjb(path2jsonlab,jobParamsFile,vara
 %            names>",
 % "path2project":"<path to the project directory>",
 % "path2drase":"<path to the DRASE directory>",
+% "path2aline":"path to the ALINE directory>",
 % "path2pso":"<path to the PSO directory>",
 % "path2shapes":"<path to the SHAPES directory>",
-% "inFilePSD":"<path to the file containing pwelch PSD training data>",
+% "inFileDataPrfx":"<file prefix and location of data realizaitons>",
+% "inFileDataRange":"<1x2 array giving the range of values from which the
+%       full file names of data realizations, i.e. [1, 5] will have 5 data
+%       realizations loaded in and estimated.>",
+% "inFilePSD":"<path to the file containing the pwelch estimated PSD
+%       training data>",
 % "inFileshpsPSD":"<path to the file containing SHAPES estimated PSD
-% training data>",
-% "outFilePSD":"<path to the file containing pwelch PSD training data to be
-% run by rungwpso>",
-% "outFileshpsPSD":"<path to the file containing SHAPES estimated PSD training
-% data to be run by rungwpso>",
-% "inFileData":"<path to the file containing detector strain data>",
+%       training data>",
 % "outDir":"<path to directory where all output files will be stored, a
-% subdirectory for the date is created under this directory. A subdirectory
-% under outDir/<date> with a UID>",
+%       subdirectory for the current date is created under this directory. 
+%       Another subdirectory under outDir/<date> with a UID is also set.>",
 % "scrtchDir": <path to directory where all temporary files, e.g., SLURM
-%               file, will be stored>",
+%       files, job text files, will be stored>",
+% "psoParamsjson":"<path to JSON file containing parameters for rungwpso's
+%       PSO run.>",
+% "signalParamsjson":"<path to JSON file containing parameters for a
+%       realized signal or an injected signal>",
 % "genDataParamsjson":"<path to JSON file containing parameters for
-%                generating line data>",
+%       generating line data>",
 % "draseParamsFile":"<path to JSON file containing parameters for each
-%                SHAPES run using drase>",
-% "jbTime": <Time per Matlab job in hours>,
-% "nNodes": <Number of compute nodes for this job>,
-% "qType":"<job queue: leave empty for default/ls6,skx-normal for stampede2>",
+%       SHAPES run using drase>",
+% "injSig":"<Injection signal control parameter, if empty no signal
+%       injection is performed, else the injected signal will have 
+%       parameters set by signalParams.json>",
+% "jbTime":"<Time per Matlab job in hours>",
+% "nNodes":"<Number of compute nodes for this job>",
+% "qType":"<job queue: leave empty for default/ls6,skx-normal for 
+%       stampede2>",
 % "email":"<email address>"
 %   }
 % }
 % Optional Input Argument
 %GENMULTISHPSLNCHRJB(J,P,U)
 % U is an unique ID number that is used when creating a folder under the
-% outfile directory. If specified, it uses that value with the format %05d,
-% i.e. U = 1, out directory is <outDir>/00001. Can be used to overwrite
-% preexisiting data(provided the date is the same) if an already used UID is
-% specified.
+% output file directory. If specified, it uses that value with the format
+% %05d, i.e. U = 1, out directory is <outDir>/00001. Can be used to
+% overwrite preexisiting data(provided the date is the same) if an already
+% used UID is specified.
 
 %Modified from genlineshpslnchrjb, Aug 2023 for ANA use
 
@@ -57,8 +66,8 @@ addpath(path2jsonlab)
 % userUID = input("UID:");
 jobParams = loadjson(jobParamsFile);
 
-%File Naming Convention
-[paramsFile,outdataFilePrfx] = ana_basics(jobParams,varargin{1});
+%% File Naming Convention
+[paramsFile,outdataFilePrfx] = ana_basics(jobParams,varargin{1},[],1);
 paramsFileshps = [paramsFile,'shps'];
 [interFilePath,interFileName,~] = fileparts(jobParams.inFilePSD);
 [outFilePath,outFileName,~] = fileparts(jobParams.inFileshpsPSD);
@@ -131,6 +140,7 @@ for nCount = 1:fileCount
     nJobs = nJobs +1;
 end
 fclose(fidJbFile);
+fclose(fidparamsFileList);
 fclose(fidOutFileList);
 %% Slurm File Generation
 genslurm(jobParams,nJobs)
