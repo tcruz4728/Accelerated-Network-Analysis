@@ -1,29 +1,17 @@
 function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
-%COMBMULTIMFSHPS(J,F,U)
+%COMBMULTIMFSHPS(D,I,O)
 %Post-job function to combine data for PC download.
-%J is the path to the jsonlab package. If set to '', the jsonlab package is
-%assumed to be in the Matlab search path. Note that this search path must
-%be accessible from every compute node, which cannot always be guaranteed.
-%Hence it is safer to specify the path explicitly.
+% D- the output file data prefix given to the files that are saved.
+% I- the input file list used in the 1st ls6 job with SHAPES, contains N
+% lines corresponding to the N files with data realizations. Needs to match
+% the file created by genmultishpslnchrjb.m
+% O- the output file list used in the 2nd ls6 job with rungwpso, contains N
+% lines corresponding to the N files with PSD estimates. Needs to match the
+% file created by genmultipsolnchrjb.m
 %
-%F is a JSON file containing the parameters of the job whose output is to
-%be post-processed.
-%
-%The file F is read to obtain the name of the folder containing all the
-%output files as well as a .txt file containing the list of the output file
-%names. The convention followed for the naming of the required files is as
-%defined in GENMULTISHPSLNCHRJB. Each output file contains the processed
-%data matrices from Drase. The separate processed data matrices are
-%combined to produce the unified SHAPES processed data matrices of the
-%original input data file. The combined data matrices are stored out in a
-%file in the folder containing all the output files.
-%
-%U is the userUID that was set for the GENMULTISHPSLNCHRJB.m
-
 % Modified from combsplitlinesshps to work with ANA data
-
-%Add path to JSONLAB
-% addpath(path2jsonlab);
+%
+% See also 
 
 %Nx3 Cell Array with inFileData, inFilePSD, and inFileshpsPSD paths
 inFilesList = readcell(inFileList,"Delimiter","  ");

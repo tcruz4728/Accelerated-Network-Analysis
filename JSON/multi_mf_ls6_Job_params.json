@@ -13,7 +13,7 @@
 "psoParamsjson":"pso.json",
 "signalParamsjson":"signal.json",
 "injSig":"",
-"jbTime": 0.5,
+"jbTime": 1.5,
 "nNodes": 2,
 "nJbsPerNode": 5,
 "qType":"normal",
