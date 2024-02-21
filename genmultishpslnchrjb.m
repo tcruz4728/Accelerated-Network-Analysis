@@ -59,15 +59,12 @@ function [outFileNameList] = genmultishpslnchrjb(path2jsonlab,jobParamsFile,vara
 
 %Modified from genlineshpslnchrjb, Aug 2023 for ANA use
 
-% path2jsonlab = 'C:\Users\tcruz\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\JSONLab_ a toolbox to encode_decode JSON files\jsonlab-2.0';
-% jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\multi_mtchdfltr_PC_Job_params.json';
 addpath(path2jsonlab)
 
-% userUID = input("UID:");
 jobParams = loadjson(jobParamsFile);
 
 %% File Naming Convention
-[paramsFile,outdataFilePrfx] = ana_basics(jobParams,varargin{1},[],1);
+[paramsFile,outdataFilePrfx,filepaths] = ana_basics(jobParams,varargin{1},[],2);
 paramsFileshps = [paramsFile,'shps'];
 [interFilePath,interFileName,~] = fileparts(jobParams.inFilePSD);
 [outFilePath,outFileName,~] = fileparts(jobParams.inFileshpsPSD);
@@ -119,8 +116,9 @@ for nCount = 1:fileCount
     fprintf(fidJbFile,' load_mtchdfltrdata(''%s'',''%s''); ',...
         inFileNameList{nCount},interFileNameList{nCount});
     %SHAPES call 
-    fprintf(fidJbFile,' run_drase4lines(''%s'',''%s'',''%s'',''%s''); ',...
-        jobParamsFile,outdataFilePrfx,interFileNameList{nCount},outFileNameList{nCount});
+    fprintf(fidJbFile,' drase4lines(''%s'',''%s'',''%s'',''%s'',''%s''); ',...
+        jobParamsFile,outdataFilePrfx,filepaths.end,...
+        interFileNameList{nCount},outFileNameList{nCount});
     %PSD Interpolation
     fprintf(fidJbFile,' createPSD(''%s''); ',... welch
         interFileNameList{nCount});

@@ -1,5 +1,3 @@
-%% Script to create interpolated PSD from SHAPES and PWELCH Estimates
-% function varargout = createPSD(inPSD,freqVec,T_sig_len,sampFreq,outFileName)
 function varargout = createPSD(varargin)
 % File input
 % O = createPSD(N)
@@ -15,7 +13,6 @@ function varargout = createPSD(varargin)
 %Thomas Cruz, May 2023, derived from Raghav's
 
 %%Optional Input arguments
-
 if nargin<2 %input file
     outFileName = varargin{1};
     load(outFileName,'PSD','freqVec','tlen','sampFreq')

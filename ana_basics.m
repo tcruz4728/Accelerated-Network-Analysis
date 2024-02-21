@@ -72,7 +72,7 @@ if ~isstruct(jobParams)
     jobParams = loadjson(jobParams);
 end
 
-%% Optional Argument
+%% Optional Arguments
 nreqArgin = 2;
 datad = [];
 anabreak = [];
@@ -94,7 +94,7 @@ for largs = 1:(nargin-nreqArgin)
 end
 
 %% Initial Setup: Parameters - job settings
-%Project and DRASE function and JSON load
+%DRASE added to pathing for dpfc function
 addpath(genpath(jobParams.path2drase));
 
 % Defining File Paths/Names and Folder Creation
@@ -106,14 +106,13 @@ paramsFileshps = [paramsFile,'shps']; %rungwpso params file for shapes data
 %Project Parameters
 psoParams = loadjson(jobParams.psoParamsjson); %matched filtering PSO params
 signalParams = loadjson(jobParams.signalParamsjson); %signal injection params
-%%%NOTE%%% - additional parameters for drase.m are called in
-%%% via jobParams.drasejobParamsFile
 
 %File Prefix Generation - Names files with project-specific parameters
 filetagstr = filetagana(psoParams,signalParams); 
 outdataFilePrfx = [outDir,jobParams.jobName,'_',filetagstr];
 
-% Quick stop for partial runs, namely for setting file conventions
+% Quick stop for partial runs, namely for setting file naming conventions
+% and creates dated folders.
 if ~isempty(anabreak) && anabreak == 1
     return
 end
@@ -136,22 +135,22 @@ if ~isempty(progCtrl) && progCtrl == 1
 end
 %% GW Parameter settings - combines relevant settings and performs necessary 
 % computations for rungwpso. Does not require time-series or PSD data
-    if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.c,fidprog,progCtrl); end
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.c,fidprog,progCtrl); end
 gwpsoparams(psoParams,signalParams,paramsFile);
 copyfile([paramsFile,'.mat'],[paramsFileshps,'.mat']); %identical but separate parameter settings
-    if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.c,fidprog,progCtrl); end
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 if ~isempty(anabreak) && anabreak == 2
     return
 end
 %% Data Load - loads time-series performs bandpass, computes training segment PSD
 % input: inFileData - time series data from LIGO or simulations
 % output: inFilePSD - training segment PSD
-    progstatus(proglines.l,fidprog,progCtrl)
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.l,fidprog,progCtrl); end
 outData = load_mtchdfltrdata(jobParams.inFileData,jobParams.inFilePSD);
-    progstatus(proglines.nd,fidprog,progCtrl)
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 %% Glitch Checking - Visual clarification with spectrogram
 if pltCtrl == 1 || pltCtrl == 12
-    progstatus(proglines.g,fidprog,progCtrl)
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.g,fidprog,progCtrl); end
     figure;
     plot(outData.dataY)
     [S,F,T] = spectrogram(outData.tseriestrainSeg,8192,8000,[],outData.sampFreq);
@@ -159,7 +158,7 @@ if pltCtrl == 1 || pltCtrl == 12
     imagesc(T,F,log10(S)); axis xy; %Checking spectrogram image for glitches or high noise
     title('Training Segment Spectrogram')
     saveas(gcf,[filepaths.figs,'Training_Spectrogram']);
-    progstatus(proglines.nd,fidprog,progCtrl)
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 end
 %% PSDs training segment plot
 if pltCtrl == 2 || pltCtrl == 12
@@ -168,18 +167,19 @@ if pltCtrl == 2 || pltCtrl == 12
     title('PSD of Training Segment')
     saveas(gcf,[filepaths.figs,'Training_PSD']);
 end
-%% SHAPES PSD estimate - takes the pwelch PSD (not the log version!) and returns in the
-%same form
+%% SHAPES PSD estimate - takes the pwelch PSD (not the log version!) and 
+% returns in the same form
 % input: inFilePSD - training segment PSD from load_mtchdfltrdata.m
 % output: inFileshpsPSD - shapes estimation of training segment PSD
-    progstatus(proglines.d,fidprog,progCtrl)
-run_drase4lines(jobParams,outdataFilePrfx);
-    progstatus(proglines.nd,fidprog,progCtrl)
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.d,fidprog,progCtrl); end
+drase4lines(jobParams,outdataFilePrfx,filepaths.figs);
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 
 %% Interpolation - Takes log10 of PSDs, interpolates and inverses the log 
 %input: outData/inFilePSD - data structure from load_mtchdfltrdata.m
 %output: inFilePSD - appending the interpolated PSD
 createPSD(outData.PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.inFilePSD);
+
 %input: inFileshpsPSD - estimated PSD from drase
 %output: inFileshpsPSD - appending the interpolated shpsPSD
 load(jobParams.inFileshpsPSD,"PSD")
@@ -188,16 +188,17 @@ createPSD(PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.inFileshps
 %% Condition Data and Compute FFTs
 %inputs: inFilePSD - interpolated PSD highpassed time series
 %output: paramsFile - updated from gwpsoparams with fft
-    progstatus(proglines.w,fidprog,progCtrl)
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.w,fidprog,progCtrl); end
 cond_mtchdfltrdata(jobParams.inFilePSD,paramsFile,jobParams.injSig);
-    progstatus(proglines.nd,fidprog,progCtrl)
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
+        
 %inputs: inFileshpsPSD - interpolated shps PSD & inFilePSD - highpassed time series
 %output: paramsFileshps - updated from gwpsoparams with fft
-    progstatus(proglines.s,fidprog,progCtrl)
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.s,fidprog,progCtrl); end
 cond_mtchdfltrdata(jobParams.inFileshpsPSD,paramsFileshps,jobParams.injSig);
-    progstatus(proglines.nd,fidprog,progCtrl)
-% [paramsFilepath,paramsFileName,~] = fileparts([paramsFile,'.mat']);
-% [~,paramsFileshpsName,~] = fileparts([paramsFileshps,'.mat']);
+        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
+
+%Display file names
 disp(['ana_basics- Parameter files saved: ',paramsFile, '.mat and ',paramsFileshps,'.mat'])
-if ~isempty(progCtrl) && progCtrl == 1, fclose(fidprog); end
+        if ~isempty(progCtrl) && progCtrl == 1, fclose(fidprog); end
 end
