@@ -51,7 +51,7 @@ for fileCount = 1:nFiles
     disp(['combmultimfshps- Saved individual run to ',...
         outdataFilePrfx,'_n',num2str(fileCount),'F.mat'])
 end
-save([outdataFilePrfx,'F.mat'],"combData");
+save([outdataFilePrfx,'F.mat'],"combData",'-v7.3');
 disp(['combmultimfshps- Saved combined runs to ',...
         outdataFilePrfx,'F.mat'])
 end
