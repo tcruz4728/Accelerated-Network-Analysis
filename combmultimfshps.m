@@ -14,22 +14,22 @@ function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
 % See also genmultishpslnchrjb, genmultipsolnchrjb.
 
 %Nx3 Cell Array with inFileData, inFilePSD, and inFileshpsPSD paths
-inFilesList = readcell(inFileList,"Delimiter","  ")
+inFilesList = readcell(inFileList,"Delimiter","  ");
 %Nx2 Cell Array with dataFile and shpsdataFile paths
-outFilesList = readcell(outFileList,"Delimiter","  ")
+outFilesList = readcell(outFileList,"Delimiter","  ");
 
-nFiles = min(size(outFilesList,1),size(inFilesList,1))
+nFiles = min(size(outFilesList,1),size(inFilesList,1));
 
 %Time series initial file
-inFileNameList = inFilesList(nFiles,1)
+inFileNameList = inFilesList(1:nFiles,1)
 %Pwelch data file (inFilePSD-goes into SHAPES)
-interFileNameList = inFilesList(nFiles,2)
+interFileNameList = inFilesList(1:nFiles,2)
 %SHAPES estimated PSD data file (inFileshpsPSD)
-outFileNameList = inFilesList(nFiles,3)
+outFileNameList = inFilesList(1:nFiles,3)
 
 %Outgoing data files
-dataFileList = outFilesList(nFiles,1);
-shpsDataFileList = outFilesList(nFiles,2);
+dataFileList = outFilesList(1:nFiles,1);
+shpsDataFileList = outFilesList(1:nFiles,2);
 
 %% Data Loop 
 combData = cell(nFiles,5);
