@@ -11,14 +11,14 @@ function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
 %
 % Modified from combsplitlinesshps to work with ANA data
 %
-% See also 
+% See also genmultishpslnchrjb, genmultipsolnchrjb.
 
 %Nx3 Cell Array with inFileData, inFilePSD, and inFileshpsPSD paths
 inFilesList = readcell(inFileList,"Delimiter","  ");
 %Nx2 Cell Array with dataFile and shpsdataFile paths
 outFilesList = readcell(outFileList,"Delimiter","  ");
 
-nFiles = min(size(outFilesList,1),size(inFilesList,1));
+nFiles = min(size(outFilesList,1),size(inFilesList,1))
 
 %Time series initial file
 inFileNameList = inFilesList(nFiles,1);

@@ -1,15 +1,12 @@
-function [whtndfiltdata, whtndstd, TFtotal]=segdatacond(segdata, PSD, sampFreq, tidxs)
+function [whtndfiltdata, whtndstd, TFtotal] = segdatacond(filtdata, PSD, sampFreq, tidxs)
 
 fmin = 30;
-% sampfreq = 4096;
-
-filtdata = segdata;
 
 datalen = length(filtdata)/sampFreq;
 
 N = length(filtdata);
-Tsig = N/sampFreq;
-timeVec = (0:N-1)*(1/sampFreq);
+% Tsig = N/sampFreq;
+% timeVec = (0:N-1)*(1/sampFreq);
 
 %Highpass Filter the data and handle NaN-regions
 % [filtdata, PSD, nanchunk_start_idxs, nanchunk_end_idxs] = nanhandle(data, sampFreq, fmin, tstart, seglen, winlen);
@@ -40,7 +37,7 @@ whtndfiltdata = ifft(whtndfftfiltdata);
 
 %Divide by variance of whitened strain so that final whitened vector has
 %unit strain
-tstart = tidxs(1);
-tend = tidxs(2);
-whtndstd = std(whtndfiltdata(tstart: tend));
+% tstart = tidxs(1);
+% tend = tidxs(2);
+whtndstd = std(whtndfiltdata(tidxs(1):tidxs(2)));
 whtndfiltdata = whtndfiltdata/whtndstd;
