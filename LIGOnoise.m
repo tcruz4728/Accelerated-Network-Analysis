@@ -1,4 +1,4 @@
-function [outNoise, PSD] = LIGOnoise(N, Fs, noise_num, noisefile)
+function [outNoise, PSD,varargout] = LIGOnoise(N, Fs, noise_num, noisefile)
 %Function to create colored noise using LIGO Design Sensitivities 
 % Design PSD is modified between 15 Hz and 700Hz.
 % Input: N = Total number of samples,
@@ -42,14 +42,14 @@ interPSD = interp1(y(:,1),y(:,2), fvec);
 minidx = find(fvec<=30, 1, 'last' );
 maxidx = find(fvec<=700, 1, 'last' );
 
-Sn50 = interPSD(minidx);
+Sn30 = interPSD(minidx);
 Sn700 = interPSD(maxidx);
  
-interPSD(1:minidx) = Sn50;
+interPSD(1:minidx) = Sn30;
 interPSD(maxidx:end) = Sn700;
 
 PSD = interPSD.^2;
-
+varargout{1} = fvec;
 %% Make colored Noise
 fltrOrdr = 10000;
 

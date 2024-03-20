@@ -1,8 +1,8 @@
+function fwave = waveform(inParams,ta,phase,gwCoefs)
 % function fwave = waveform_tau(fvec, t, phase, fmin, fmax,tau0, tau1p5,datalen,initial_phase,avec)
 %Function to create Restricted 2PN Waveform in Fourier Domain
 %Input is positive DFT frequency vector, returns phase of wave in fourier domain for
 %postive DFT frequencies
-function fwave = waveform(inParams, t,phase,gwCoefs)
 
 fvec = inParams.fpos;
 fmin = inParams.frange(1);
@@ -68,7 +68,7 @@ alphaTerm(2:end) = alpha0*avec(1,:)...
 F = 2*pi*fvec*(tau0 + tau1 - tau1p5 + tau2);
 
 %% Final Phase Term
-Psi = 2*pi*t*fvec - phase - pi/4 + alphaTerm + F + initial_phase;
+Psi = 2*pi*ta*fvec - phase - pi/4 + alphaTerm + F + initial_phase;
 
 %% Final Expression
 fwave = exp(-1j*Psi);

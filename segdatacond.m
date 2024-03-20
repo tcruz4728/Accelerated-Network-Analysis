@@ -1,6 +1,6 @@
-function [whtndfiltdata, whtndstd, TFtotal] = segdatacond(filtdata, PSD, sampFreq, tidxs)
+function [whtndfiltdata, whtndstd, TFtotal] = segdatacond(filtdata, PSD, sampFreq, tidxs,fmin)
 
-fmin = 30;
+% fmin = 30;
 
 datalen = length(filtdata)/sampFreq;
 

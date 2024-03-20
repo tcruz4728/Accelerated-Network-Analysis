@@ -146,7 +146,7 @@ end
 % input: inFileData - time series data from LIGO or simulations
 % output: inFilePSD - training segment PSD
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.l,fidprog,progCtrl); end
-outData = load_mtchdfltrdata(jobParams.inFileData,jobParams.inFilePSD);
+outData = load_mfdata(jobParams.inFileData,jobParams.inFilePSD);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 %% Glitch Checking - Visual clarification with spectrogram
 if pltCtrl == 1 || pltCtrl == 12
@@ -189,13 +189,13 @@ createPSD(PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.inFileshps
 %inputs: inFilePSD - interpolated PSD highpassed time series
 %output: paramsFile - updated from gwpsoparams with fft
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.w,fidprog,progCtrl); end
-cond_mtchdfltrdata(jobParams.inFilePSD,paramsFile,jobParams.injSig);
+cond_mfdata(jobParams.inFilePSD,paramsFile,jobParams.injSig);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
         
 %inputs: inFileshpsPSD - interpolated shps PSD & inFilePSD - highpassed time series
 %output: paramsFileshps - updated from gwpsoparams with fft
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.s,fidprog,progCtrl); end
-cond_mtchdfltrdata(jobParams.inFileshpsPSD,paramsFileshps,jobParams.injSig);
+cond_mfdata(jobParams.inFileshpsPSD,paramsFileshps,jobParams.injSig);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 
 %Display file names

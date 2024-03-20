@@ -21,11 +21,11 @@ outFilesList = readcell(outFileList,"Delimiter","  ");
 nFiles = min(size(outFilesList,1),size(inFilesList,1));
 
 %Time series initial file
-inFileNameList = inFilesList(1:nFiles,1)
+inFileNameList = inFilesList(1:nFiles,1);
 %Pwelch data file (inFilePSD-goes into SHAPES)
-interFileNameList = inFilesList(1:nFiles,2)
+interFileNameList = inFilesList(1:nFiles,2);
 %SHAPES estimated PSD data file (inFileshpsPSD)
-outFileNameList = inFilesList(1:nFiles,3)
+outFileNameList = inFilesList(1:nFiles,3);
 
 %Outgoing data files
 dataFileList = outFilesList(1:nFiles,1);
@@ -45,7 +45,7 @@ for fileCount = 1:nFiles
     %Rungwpso Data
     outData = load(dataFileList{fileCount});
     estoutData = load(shpsDataFileList{fileCount});
-    combData{fileCount} = {inputData,psdData,estpsdData,outData,estoutData};
+    combData(fileCount,:) = {inputData,psdData,estpsdData,outData,estoutData};
     save([outdataFilePrfx,'_n',num2str(fileCount),'F.mat'],...
         "inputData","psdData","estpsdData","outData","estoutData");
     disp(['combmultimfshps- Saved individual run to ',...

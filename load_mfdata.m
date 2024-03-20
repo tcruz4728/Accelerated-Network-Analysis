@@ -1,4 +1,4 @@
-function varargout = load_mtchdfltrdata(inFileData,inFilePSD,varargin)
+function varargout = load_mfdata(inFileData,inFilePSD,varargin)
 % Function to load LIGO time series for use with matched filtering.
 % LOAD_MTCHDFLTRDATA(D,P)
 % Loads data file D which can either be a .hdf5 or a .mat file. Applies a
@@ -57,12 +57,17 @@ switch lower(fileExt)
         nSamples = double(h5readatt(inFileData,'/strain/Strain','Npoints'));
         tIntrvl = double(h5readatt(inFileData,'/strain/Strain','Xspacing')); %Time Interval
     case '.mat'
-        load(inFileData,'dataY','tIntrvl');
+        load(inFileData,'dataY','tIntrvl','dsstPSD');
         nSamples = length(dataY);
 end
 
 tlen = nSamples*tIntrvl;
 sampFreq = 1/tIntrvl;
+
+% dsstPSD = dsstPSD(1:end-1);
+% kNyq = floor(nSamples/2);
+% fvec = (0:(kNyq))*sampFreq/nSamples;
+% dsstPSD = interp1(freqVec,dsstPSD,fvec);
 
 %Downsampling to 4 kHz
 sampFreq = double(sampFreq); %Converts to double from int64
@@ -99,5 +104,6 @@ outData = struct('PSD',PSD,'freqVec',freqVec, ...
     'tseriestrainSeg',tseriestrainSeg);
 varargout{1} = outData;
 
-save(inFilePSD,"PSD","freqVec","dataY","sampFreq",'freqBnd','tlen')
+save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
+    'freqBnd','tlen','dsstPSD')
 

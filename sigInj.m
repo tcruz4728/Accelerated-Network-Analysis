@@ -1,5 +1,5 @@
+function [signal] = sigInj(params,PSDtotal)
 % function [signal] = sigInj(fpos, ta, phase, fmin, fmax, m1,m2,r,datalen, initial_phase, N, avec, A)
-function [signal] = sigInj(params,signalParams)
 %SIGINJ Returns time domain vector of waveform for injection with custom
 %strain amplitude
 %   This function creates a time domain vector of a custom injected
@@ -21,42 +21,39 @@ function [signal] = sigInj(params,signalParams)
 
 % load(paramsFile);
 signalParams = params.signal;
-%Constants
-% fmin = 30;
-c = 3*10^8;
-G = 6.6743*10^-11;
-Msolar = 1.989*10^30;
-Mpc = 3.8057*10^22; %1 Megaparsec in meters
 m1 = signalParams.masses(1);
 m2 = signalParams.masses(2);
-m1_val = m1*Msolar;
-m2_val = m2*Msolar;
-M = m1_val + m2_val; %Should be in solar mass
-u = m1_val*m2_val/M; %Should be in solar mass
-chirpmass = (u^3*M^2)^(1/5);
-% pzi = 3*((chirpmass/Msolar)^(-5/3))*(fmin/100)^(-8/3);
-% Nfac = (1/sqrt(50))*(fmin/100)^(2/3);
-
-%Factors to keep phase vector unnormalized
-signalParams.snr = 1;
-params.normfac = 1;
-
-%Multiply strain amplitude factor
-% r = r*Mpc;
-r = signalParams.r*Mpc;
-% Afac = ((2*u*G)/(r*c^4))*(G*M*pi)^(2/3);
-% Afac = ((384/5)^(1/2))*(pi^(2/3))*(chirpmass^(5/6))*(G^(5/6))*(c^(-3/2))/r;
-% whtndstd = segdatacond(noise,psd,4096,[1,32*4096]);
 
 %Create Fourier Phase vector
 % wavephase = gen2PNwaveform(fpos, ta, phase, fmin, fmax, m1,m2,datalen, initial_phase, snr, N, avec, normfac);
-wavephase = gen2PNwaveform(params,signalParams.ta,0,[m1,m2,1],signalParams.snr);
-
-%Multiply Fourier Magnitude vector and strain amplitude factor
-wavefourier = Afac*params.A.*wavephase; %row vectors
+wavephase = gen2PNwaveform(params,signalParams.ta,0,[m1,m2,1],1);
 
 %Create waveform vector in time domain
-signal = ifft(wavefourier);
+waveVec = ifft(params.A.*wavephase);
 
+%Normalized to unit 1
+N = length(PSDtotal);
+normfac = 1/sqrt((1/N)*sum((fft(waveVec)./PSDtotal).*conj(fft(waveVec))));
+% normfac = 1/sqrt(innerproduct(waveVec,waveVec,PSDtotal));
+
+% Create final signal
+signal = params.signal.snr*normfac*waveVec;
+
+% %Create waveform vector in time domain
+% signal = ifft(wavefourier);
+%Constants
+% fmin = 30;
+% c = 3*10^8;
+% G = 6.6743*10^-11;
+% Msolar = 1.989*10^30;
+% Mpc = 3.8057*10^22; %1 Megaparsec in meters
+
+% m1_val = m1*Msolar;
+% m2_val = m2*Msolar;
+% M = m1_val + m2_val; %Should be in solar mass
+% u = m1_val*m2_val/M; %Should be in solar mass
+% chirpmass = (u^3*M^2)^(1/5);
+% pzi = 3*((chirpmass/Msolar)^(-5/3))*(fmin/100)^(-8/3);
+% Nfac = (1/sqrt(50))*(fmin/100)^(2/3);
 end
 

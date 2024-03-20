@@ -17,7 +17,7 @@ if nargin<2 %input file
     outFileName = varargin{1};
     load(outFileName,'PSD','freqVec','tlen','sampFreq')
 else %input values
-    for largs = 1:5
+    for largs = 1:nargin
         switch largs
             case 1
                 PSD = varargin{largs};

@@ -1,4 +1,4 @@
-function [varargout] = cond_mtchdfltrdata(inputFile,paramsFileName,varargin)
+function [varargout] = cond_mfdata(inputFile,paramsFileName,varargin)
 % Function that handles data reading and conditioning before being called
 % by rungwpso.m. Works by reading a flag specified in the jobParamsFile
 % which specifies the kind of data being used, either unified under a
@@ -16,32 +16,41 @@ load(paramsFileName,"params")
 negFStrt = 1-mod(params.N,2);
 kNyq = floor(params.N/2)+1;
 % Load data
-% switch datatype
-%     case 1 %'welch'
-load(inputFile,"interpPSD","sampFreq","dataY","freqBnd",'tlen'); %PSD
-% %     case 2 %'shps'
-% %         load(jobParams.inFileshpsPSD,'interpPSD','sampFreq',"dataY","freqBnd",'tlen') %SHAPES estimated Welchs PSD
-% % end
-% load(jobParams.inFilePSD,"dataY","freqBnd",'tlen'); %highpassed dataY
-
-%Perform signal injection (optional)
-if ~isempty(varargin{1})
-    signal = sigInj(params);
-    dataY = dataY + 1*signal;
-end
+load(inputFile,"interpPSD","sampFreq","dataY",'freqBnd','dsstPSD'); %PSD
 
 %Windowing before fft
 dataYwin = tukeywin(size(dataY,2),0.5*sampFreq/(size(dataY,2)));
 dataY = dataY.*dataYwin';
 
-%Compute transfer function and FFT
-% TF = 1./sqrt((interpPSD./2));
-% TF(1:(freqBnd(1)*tlen)) = 0; %Zeroing frequencies below min frequency
-% TFtotal = [TF, TF((kNyq-negFStrt):-1:2)]; %Computed from training segment
-[whtndfiltdata, ~, TFtotal]=segdatacond(dataY, interpPSD, sampFreq, [1,32*sampFreq]);
+%Whiten data and create transfer function
+[whtndfiltdata, ~, TFtotal]=segdatacond(dataY, interpPSD, sampFreq,...
+    [1,32*sampFreq],freqBnd(1,1));
 
+%Perform signal injection (optional)
+if ~isempty(varargin{1})
+    %Compute two-sided PSD from design sensitivity PSD for signal injection
+    dsstPSDtotal = [dsstPSD, dsstPSD((kNyq-negFStrt):-1:2)];
+    signal = sigInj(params,dsstPSDtotal);
+    %(Alternative)
+    % signal = gen2PNtemplate_mass(params,params.signal.ta,0,...
+    %     [params.gwCoefs,1],params.signal.snr,dsstPSDtotal);
+
+    %q0 & q1 are phases for testing if the signal can be detected by mf
+    % q0 = gen2PNtemplate_mass(params,0,0,[params.gwCoefs,1],1,dsstPSDtotal);
+    % q1 = gen2PNtemplate_mass(params,0,pi/2,[params.gwCoefs,1],1,dsstPSDtotal);
+
+    %Whiten the signal using the transfer function from PSD (pwelch or
+    %shps)
+    whtndsignal = ifft(fft(signal).*(TFtotal));
+    whtndfiltdata = whtndfiltdata + whtndsignal;
+end
 fftdataYbyPSD = fft(whtndfiltdata).*TFtotal.*params.A;
 
+% Optional plotting to check for proper signal injection
+% mf1 = matchedfiltering(fftdataYbyPSD,q0);
+% mf2 = matchedfiltering(fftdataYbyPSD,q1);
+% mfts = sqrt(mf1.^2 + mf2.^2);
+% figure; plot(mfts)
 %% Create General Normalization Factor
 AbysqrtPSD = params.A.*TFtotal;
 innProd = (1/params.N)*(AbysqrtPSD)*AbysqrtPSD';
