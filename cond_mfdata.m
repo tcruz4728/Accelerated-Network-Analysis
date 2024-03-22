@@ -71,5 +71,5 @@ if nargout > 0
 end
 % save(jobParams.outFileData,"fftdataYbyPSD",'TFtotal','dataY');
 save(paramsFileName,'params','-append')
-disp(['cond_mtchdfltrdata- Parameters MaJ with conditioned data and saved to: ',paramsFileName])
+disp(['cond_mfdata- Parameters MaJ with conditioned data and saved to: ',paramsFileName])
 end

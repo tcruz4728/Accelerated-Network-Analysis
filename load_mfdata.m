@@ -106,4 +106,5 @@ varargout{1} = outData;
 
 save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
     'freqBnd','tlen','dsstPSD')
+disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
 

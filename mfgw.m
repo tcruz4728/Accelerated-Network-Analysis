@@ -8,8 +8,6 @@ function [mfVal, max_arg,varargout] = mfgw(gwCoefs,params)
 % tau0 = x(1);
 % tau1p5 = x(2);
 fftq0 = gen2PNwaveform(params,0,0,gwCoefs,1);
-disp(num2str(size(fftq0)))
-disp(num2str(length(params.fftdataYbyPSD)))
 % phaseq0 = gen2PNwaveform_tau(params.fpos, 0, 0, params.frange(1), params.frange(2), tau0,...
 %     tau1p5,params.datalen,0,1,params.N,params.avec, params.normfac);
 
