@@ -8,9 +8,12 @@ path2jsonlab = 'C:\Users\tcruz\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collecti
 addpath(path2jsonlab)
 addpath("References\")
 %Job File 
-jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\mf_PC_Job_params.json';
+jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\multi_shps_PC_Job_params.json';
 %Load job parameters
 jobParams = loadjson(jobParamsFile);
+% for filecount = 1:jobParams.inFileDataRange(end)
+    jobParams.inFileData = [jobParams.inFileDataPrFx,num2str(jobParams.inFileDataRange(1)),'.mat'];
+% end
 %% Runs necessary prep-functions for rungwpso
 [paramsFile,outdataFilePrfx,filepaths,progressFile] = ana_basics(jobParams,userUID,datad,[],progCtrl,12);
 fidprog = fopen(progressFile,'a');
@@ -30,7 +33,7 @@ rungwpso(paramsFileshps,shpsDataFile) %shapes estimate
     progstatus(proglines.nd,fidprog,progCtrl)
 %% Post Processing
     progstatus(proglines.p,fidprog,progCtrl)
-combFileName = comb_anashpsjb(path2jsonlab,jobParamsFile,userUID);
+combFileName = comb_anashpsjb(path2jsonlab,jobParams,userUID);
 close all
 postprocessing(combFileName,filepaths,jobParams.injSig);
     progstatus(proglines.nd,fidprog,progCtrl)
