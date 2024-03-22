@@ -15,7 +15,7 @@
 "signalParamsjson":"signal.json",
 "genDataParamsjson":"/work/08302/tcruz/DRASE/JSON/genDataParams.json",
 "draseParamsjson":"/work/08302/tcruz/DRASE/JSON/draseParams.json",
-"injSig":"",
+"injSig":1,
 "jbTime": 0.5,
 "nNodes": 1,
 "nJbsPerNode": 16,
