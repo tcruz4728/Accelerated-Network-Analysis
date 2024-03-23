@@ -12,7 +12,7 @@ switch params.dataGenType
         Nsamples = sigparams.sampFreq*sigparams.datalen;
         data_realizations = zeros(sigparams.nRealizations,Nsamples);
         for lpruns = 1:sigparams.nRealizations
-            [data_realizations(lpruns,:),dsstPSD,freqVec] = LIGOnoise(Nsamples,sigparams.sampFreq,1,'sample');
+            [data_realizations(lpruns,:),dsstPSD,dsstfreqVec] = LIGOnoise(Nsamples,sigparams.sampFreq,1,'sample');
         end
 end
 tIntrvl = 1/sigparams.sampFreq;
@@ -21,7 +21,7 @@ for i = 1:size(data_realizations,1)
     dataY = data_realizations(i,:);
     save(['TMPPSDDATA',filesep,'realization','_',num2str(sigparams.datalen),...
         's_inj',num2str(sigparams.ta),'_fs',num2str(sigparams.sampFreq),'_n',num2str(i),'.mat'],...
-        "dataY","tIntrvl",'dsstPSD',"freqVec")
+        "dataY","tIntrvl",'dsstPSD',"dsstfreqVec")
 end
 disp(['dataRealizationgenmat- Saved ',num2str(size(data_realizations,1)),...
     ' data files to Accelerated-Network-Analysis',filesep,'TMPPSDDATA',...

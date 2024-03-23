@@ -57,17 +57,15 @@ switch lower(fileExt)
         nSamples = double(h5readatt(inFileData,'/strain/Strain','Npoints'));
         tIntrvl = double(h5readatt(inFileData,'/strain/Strain','Xspacing')); %Time Interval
     case '.mat'
-        load(inFileData,'dataY','tIntrvl','dsstPSD');
+        load(inFileData,'dataY','tIntrvl','dsstPSD','dsstfreqVec');
         nSamples = length(dataY);
+        % figure;
+        % plot(dsstfreqVec,log10(dsstPSD),'k')
+        % hold on
 end
 
 tlen = nSamples*tIntrvl;
 sampFreq = 1/tIntrvl;
-
-% dsstPSD = dsstPSD(1:end-1);
-% kNyq = floor(nSamples/2);
-% fvec = (0:(kNyq))*sampFreq/nSamples;
-% dsstPSD = interp1(freqVec,dsstPSD,fvec);
 
 %Downsampling to 4 kHz
 sampFreq = double(sampFreq); %Converts to double from int64
@@ -91,13 +89,15 @@ else
 end
 tseriestrainSeg = dataY_highpass(strtTime:endTime);
 
-% pwelch PSD estimation
+%% Pwelch PSD estimation
 winVec = tukeywin(4*sampFreq);
 [PSD,freqVec] = pwelch(tseriestrainSeg,winVec,[],[],sampFreq);
-PSD = PSD.'; %outputs need to be column vectors
+PSD = PSD.'/2; %outputs need to be column vectors, /2 to convert to 2-sided psd
 freqVec = freqVec.';
-
+% plot(freqVec,log10(PSD),'b')
 freqBnd = [strtFreq,endFreq]; 
+
+%% Outputs
 outData = struct('PSD',PSD,'freqVec',freqVec, ...
     'dataY',dataY,'sampFreq', sampFreq, ...
     'FreqBnd',freqBnd,'tlen',tlen,...'PSDog',PSDog,'freqVecog',freqVecog,...
@@ -105,6 +105,5 @@ outData = struct('PSD',PSD,'freqVec',freqVec, ...
 varargout{1} = outData;
 
 save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
-    'freqBnd','tlen','dsstPSD')
+    'freqBnd','tlen','dsstPSD','dsstfreqVec')
 disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
-

@@ -41,8 +41,9 @@ if ~isempty(varargin{1})
 
     %Whiten the signal using the transfer function from PSD (pwelch or
     %shps)
-    whtndsignal = ifft(fft(signal).*(TFtotal));
+    whtndsignal = (1/sqrt(params.signal.sampling_freq))*ifft(fft(signal).*(TFtotal));
     whtndfiltdata = whtndfiltdata + whtndsignal;
+    disp(["cond_mfdata- injected signal with snr: ", num2str(params.signal.snr)])
 end
 fftdataYbyPSD = fft(whtndfiltdata).*TFtotal.*params.A;
 
