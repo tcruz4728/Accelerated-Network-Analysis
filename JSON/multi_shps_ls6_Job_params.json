@@ -6,7 +6,7 @@
 "path2pso":"/work/08302/tcruz/SDMBIGDAT19/CODES",
 "path2shapes":"/work/08302/tcruz/SHAPES-tcruz",
 "inFileDataPrFx":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/realization_512s_inj138_fs4096_n",
-"inFileDataRange":[1, 10],
+"inFileDataRange":[1, 12],
 "inFilePSD":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/pwPSD.mat",
 "inFileshpsPSD":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/estPSD.mat",
 "outDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
