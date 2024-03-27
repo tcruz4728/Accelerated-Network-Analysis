@@ -61,5 +61,5 @@ allCtrl = 2;
 outStruct = crcbgwpso(params,psoParams,allCtrl);
 bestFitVal = -1*outStruct.bestFitness;
 save(outFileName,'outStruct','bestFitVal',"original_fitVal",'params','mf');
-disp(['rungwpso- Saved matched filtering outputs to', outFileName]);
+disp(['rungwpso- Saved matched filtering outputs to ', outFileName]);
 end

@@ -128,8 +128,7 @@ for nCount = 1:fileCount
     end
     fprintf(fidOutFileList,'%s  %s\n',...
         dataFileList{nCount},...
-        shpsDataFileList{nCount});
-        
+        shpsDataFileList{nCount});    
 end
 fclose(fidOutFileList);
 fclose(fidJbFile);
