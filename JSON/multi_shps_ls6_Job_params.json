@@ -16,7 +16,7 @@
 "genDataParamsjson":"/work/08302/tcruz/DRASE/JSON/genDataParams.json",
 "draseParamsjson":"/work/08302/tcruz/DRASE/JSON/draseParams.json",
 "injSig":1,
-"jbTime": 0.5,
+"jbTime": 0.7,
 "nNodes": 1,
 "nJbsPerNode": 16,
 "qType":"normal",
