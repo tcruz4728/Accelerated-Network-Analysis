@@ -12,6 +12,7 @@ function varargout = createPSD(varargin)
 %sampling frequency.
 %Thomas Cruz, May 2023, derived from Raghav's
 
+outFileName = [];
 %%Optional Input arguments
 if nargin<2 %input file
     outFileName = varargin{1};
@@ -50,5 +51,7 @@ loginterpPSD = interp1(freqVec, logPSD, fvec);
 interpPSD = (10.^loginterpPSD);
 
 varargout{1} = interpPSD;
-save(outFileName,"interpPSD",'-append')
+if ~isempty(outFileName)
+    save(outFileName,"interpPSD",'-append')
+end
 end

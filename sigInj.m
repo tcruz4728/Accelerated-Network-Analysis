@@ -37,10 +37,12 @@ waveVec = ifft(params.A.*wavephase);
 
 %Normalized to unit 1
 N = length(PSDtotal);
-normfac = 1/sqrt((1/N)*sum((fft(waveVec)./PSDtotal).*conj(fft(waveVec))));
+normfac = 1/sqrt((1/(N*signalParams.sampling_freq))*sum((fft(waveVec)./PSDtotal).*conj(fft(waveVec))));
+% normfac = sqrt(N/sum((fft(waveVec)./PSDtotal).*conj(fft(waveVec))));
 % normfac = 1/sqrt(innerproduct(waveVec,waveVec,PSDtotal));
 
 % Create final signal
 signal = params.signal.snr*normfac*waveVec;
+% signal = sqrt(signalParams.sampling_freq)*waveVec;
 end
 

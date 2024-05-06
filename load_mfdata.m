@@ -31,37 +31,49 @@ function varargout = load_mfdata(inFileData,inFilePSD,varargin)
 
 %% Default Parameters
 strtFreq = 30; % Low Frequency cutoff, or starting frequency
-endFreq = 900; % High Frequency cutoff, or ending frequency
+endFreq = 700; % High Frequency cutoff, or ending frequency
 
 %Override default parameters if given
 nreqArgs = 2;
+sigInjChk = [];
 for lpargs = 1:(nargin-nreqArgs)
     if ~isempty(varargin{lpargs})
         switch lpargs
             case 1
-                strtFreq = varargin{lpargs};
+                sigInjChk = varargin{lpargs};
             case 2
+                strtFreq = varargin{lpargs};
+            case 3
                 endFreq = varargin{lpargs};
         end
     end
 end
 
 %% Load LIGO .hdf5 File strain data or generated .mat data
-[~,~,fileExt] = fileparts(inFileData);
-switch lower(fileExt)
-    case '.hdf5' % Data is assumed to be unwhitened time series strain data 
-                 % from a GW detector.
-% Extracting the strain data, sampling frequency and time interval between
-% data points.
-        dataY = h5read(inFileData,'/strain/Strain')';
-        nSamples = double(h5readatt(inFileData,'/strain/Strain','Npoints'));
-        tIntrvl = double(h5readatt(inFileData,'/strain/Strain','Xspacing')); %Time Interval
-    case '.mat'
-        load(inFileData,'dataY','tIntrvl','dsstPSD','dsstfreqVec');
-        nSamples = length(dataY);
-        % figure;
-        % plot(dsstfreqVec,log10(dsstPSD),'k')
-        % hold on
+if isstruct(inFileData)
+    dataY = inFileData.dataY;
+    tIntrvl = inFileData.tIntrvl;
+    dsstPSD = inFileData.dsstPSD;
+    dsstfreqVec = inFileData.dsstfreqVec;
+    nSamples = length(dataY);
+else
+    [~,~,fileExt] = fileparts(inFileData);
+    switch lower(fileExt)
+        case '.hdf5' % Data is assumed to be unwhitened time series strain data
+            % from a GW detector.
+            % Extracting the strain data, sampling frequency and time interval between
+            % data points.
+            dataY = h5read(inFileData,'/strain/Strain')';
+            nSamples = double(h5readatt(inFileData,'/strain/Strain','Npoints'));
+            tIntrvl = double(h5readatt(inFileData,'/strain/Strain','Xspacing')); %Time Interval
+        case '.mat'
+            load(inFileData,'dataY','tIntrvl','dsstPSD','dsstfreqVec','injSigparams');
+            disp(['load_mfdata- ',inFileData])
+            nSamples = length(dataY);
+            % figure;
+            % plot(dsstfreqVec,log10(dsstPSD),'k')
+            % hold on
+    end
 end
 
 tlen = nSamples*tIntrvl;
@@ -73,7 +85,35 @@ if sampFreq == 16384
     sampFreq = 4096;
     dataY = resample(dataY,1,4);
 end
+%% Signal Injection
+if ~isempty(sigInjChk)
+    % negFStrt = 1-mod(nSamples,2);
+    % kNyq = floor(nSamples/2)+1;
+    % Compute two-sided PSD from design sensitivity PSD for signal injection
+    % dsstPSDtotal = [dsstPSD, dsstPSD((kNyq-negFStrt):-1:2)];
+    % PSDtotal = [interpPSD,interpPSD((kNyq-negFStrt):-1:2)];
+    % dsstTFtotal = 1./sqrt(dsstPSDtotal);
+    % AbysqrtPSD = params.A.*dsstTFtotal;
+    % innProd = (1/params.N)*(AbysqrtPSD)*AbysqrtPSD';
+    % params.normfac = 1/sqrt(real(innProd));
+    % [params.data] = sigInj(params,dsstPSDtotal);
+    %(Alternative)
+    % signal = gen2PNtemplate_mass(params,params.signal.ta,0,...
+    %     [params.gwCoefs,1],params.signal.snr,dsstPSDtotal);
 
+    %q0 & q1 are phases for testing if the signal can be detected by mf
+    % q0 = gen2PNtemplate_mass(params,0,0,[params.gwCoefs,1],1,dsstPSDtotal);
+    % q1 = gen2PNtemplate_mass(params,0,pi/2,[params.gwCoefs,1],1,dsstPSDtotal);
+
+    %Whiten the signal using the transfer function from PSD (pwelch or
+    %shps)
+    % whtndsignal = (1/sqrt(params.signal.sampling_freq))*ifft(fft(signal).*(TFtotal));
+    % whtndsignal = ifft(fft(signal).*(TFtotal));
+    % whtndfiltdata = whtndfiltdata + whtndsignal;
+    % disp(num2str(normfac))
+    dataY = dataY + injSigparams.signal.data;
+    disp(['load_mfdata- Injected signal with snr: ', num2str(injSigparams.signal.snr)])
+end
 %% Band-pass filter on unwhitened time series data
 dataYwin = tukeywin(size(dataY,2),4*sampFreq/(size(dataY,2)));
 dataY = dataY.*dataYwin';
@@ -100,10 +140,14 @@ freqBnd = [strtFreq,endFreq];
 %% Outputs
 outData = struct('PSD',PSD,'freqVec',freqVec, ...
     'dataY',dataY,'sampFreq', sampFreq, ...
-    'FreqBnd',freqBnd,'tlen',tlen,...'PSDog',PSDog,'freqVecog',freqVecog,...
-    'tseriestrainSeg',tseriestrainSeg);
+    'freqBnd',freqBnd,'tlen',tlen,...'PSDog',PSDog,'freqVecog',freqVecog,...
+    'tseriestrainSeg',tseriestrainSeg,...
+    'dsstPSD',dsstPSD,'dsstfreqVec',dsstfreqVec,...
+    'injectedSignal',injSigparams.signal.data);
 varargout{1} = outData;
 
-save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
-    'freqBnd','tlen','dsstPSD','dsstfreqVec')
-disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
+if ~isempty(inFilePSD)
+    save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
+        'freqBnd','tlen','dsstPSD','dsstfreqVec','injSigparams')
+    disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
+end

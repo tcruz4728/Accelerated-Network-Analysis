@@ -1,4 +1,4 @@
-function [whtndfiltdata, whtndstd, TFtotal] = segdatacond(filtdata, PSD, sampFreq, tidxs,fmin)
+function [whtndfiltdata, TFtotal] = segdatacond(filtdata, PSD, sampFreq, tidxs,fmin)
 
 % fmin = 30;
 
@@ -33,11 +33,11 @@ fftfiltdata = fft(winfiltdata);
 
 whtndfftfiltdata = fftfiltdata.*TFtotal;
 
-whtndfiltdata = ifft(whtndfftfiltdata);
+whtndfiltdata = ifft(whtndfftfiltdata)/sqrt(sampFreq);
 
 %Divide by variance of whitened strain so that final whitened vector has
 %unit strain
 % tstart = tidxs(1);
 % tend = tidxs(2);
-whtndstd = std(whtndfiltdata(tidxs(1):tidxs(2)));
-whtndfiltdata = whtndfiltdata/whtndstd;
+% whtndstd = std(whtndfiltdata(tidxs(1):tidxs(2)));
+% whtndfiltdata = whtndfiltdata/whtndstd;

@@ -14,7 +14,8 @@ avec = inParams.avec;
 % t = ta_index/inParams.Fs;
 
 %% Constants
-c = 3*10^8;
+% c = 3*10^8;
+c = 299792458;
 Msolar = 1.989*10^30;
 G = 6.6743*10^-11;
 cGfac = (c^3/G);

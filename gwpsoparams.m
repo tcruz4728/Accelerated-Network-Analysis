@@ -127,11 +127,17 @@ params = struct('dataX', timeVec,...
                   'signal',signalParams,...
                   'pso',psoParams,...
                   'gwCoefs',[gwCoefs,psoParams.type]);
+%% Output
 if nargout>0
     varargout{1} = params;
 end
 if nargin >2
+    if ischar(varargin{1})
     save(varargin{1},'params','psoParams','signalParams','gwCoefs')
+    else
+        disp('gwpsoparams- No parameter file saved')
+        return
+    end
 else 
     save('params.mat','params','psoParams','signalParams','gwCoefs')
 end

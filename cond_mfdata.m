@@ -1,4 +1,4 @@
-function [varargout] = cond_mfdata(inputFile,paramsFileName,varargin)
+function [varargout] = cond_mfdata(inData,paramsData)
 % Function that handles data reading and conditioning before being called
 % by rungwpso.m. Works by reading a flag specified in the jobParamsFile
 % which specifies the kind of data being used, either unified under a
@@ -9,43 +9,56 @@ function [varargout] = cond_mfdata(inputFile,paramsFileName,varargin)
 % FFT(timeseries) and Transfer function (1/sqrt(PSD)).
 
 % jobParams = loadjson(jobParamsFile);
-load(paramsFileName,"params")
-
+if isstruct(paramsData)
+    params = paramsData;
+else
+    load(paramsData,"params")
+end
 %% Create entire PSD vector
 
-negFStrt = 1-mod(params.N,2);
-kNyq = floor(params.N/2)+1;
-% Load data
-load(inputFile,"interpPSD","sampFreq","dataY",'freqBnd','dsstPSD'); %PSD
+% negFStrt = 1-mod(params.N,2);
+% kNyq = floor(params.N/2)+1;
+
+% Load data either via structure or .mat file
+if isstruct(inData)
+    interpPSD = inData.interpPSD;
+    sampFreq = inData.sampFreq;
+    dataY = inData.dataY;
+    freqBnd = inData.freqBnd;
+    % dsstPSD = inData.dsstPSD;
+else %.mat load
+    % load(inData,"interpPSD","sampFreq","dataY",'freqBnd','dsstPSD'); %PSD
+    load(inData,"interpPSD","sampFreq","dataY",'freqBnd');
+end
 
 %Windowing before fft
 dataYwin = tukeywin(size(dataY,2),0.5*sampFreq/(size(dataY,2)));
 dataY = dataY.*dataYwin';
 
 %Whiten data and create transfer function
-[whtndfiltdata, ~, TFtotal]=segdatacond(dataY, interpPSD, sampFreq,...
+[whtndfiltdata, TFtotal]=segdatacond(dataY, interpPSD, sampFreq,...
     [1,32*sampFreq],freqBnd(1,1));
 
-%Perform signal injection (optional)
-if ~isempty(varargin{1})
-    %Compute two-sided PSD from design sensitivity PSD for signal injection
-    dsstPSDtotal = [dsstPSD, dsstPSD((kNyq-negFStrt):-1:2)];
-    signal = sigInj(params,dsstPSDtotal);
-    %(Alternative)
-    % signal = gen2PNtemplate_mass(params,params.signal.ta,0,...
-    %     [params.gwCoefs,1],params.signal.snr,dsstPSDtotal);
-
-    %q0 & q1 are phases for testing if the signal can be detected by mf
-    % q0 = gen2PNtemplate_mass(params,0,0,[params.gwCoefs,1],1,dsstPSDtotal);
-    % q1 = gen2PNtemplate_mass(params,0,pi/2,[params.gwCoefs,1],1,dsstPSDtotal);
-
-    %Whiten the signal using the transfer function from PSD (pwelch or
-    %shps)
-    % whtndsignal = (1/sqrt(params.signal.sampling_freq))*ifft(fft(signal).*(TFtotal));
-    whtndsignal = ifft(fft(signal).*(TFtotal));
-    whtndfiltdata = whtndfiltdata + whtndsignal;
-    disp(['cond_mfdata- injected signal with snr: ', num2str(params.signal.snr)])
-end
+% %Perform signal injection (optional)
+% if ~isempty(varargin{1})
+%     %Compute two-sided PSD from design sensitivity PSD for signal injection
+%     dsstPSDtotal = [dsstPSD, dsstPSD((kNyq-negFStrt):-1:2)];
+%     signal = sigInj(params,dsstPSDtotal);
+%     %(Alternative)
+%     % signal = gen2PNtemplate_mass(params,params.signal.ta,0,...
+%     %     [params.gwCoefs,1],params.signal.snr,dsstPSDtotal);
+% 
+%     %q0 & q1 are phases for testing if the signal can be detected by mf
+%     % q0 = gen2PNtemplate_mass(params,0,0,[params.gwCoefs,1],1,dsstPSDtotal);
+%     % q1 = gen2PNtemplate_mass(params,0,pi/2,[params.gwCoefs,1],1,dsstPSDtotal);
+% 
+%     %Whiten the signal using the transfer function from PSD (pwelch or
+%     %shps)
+%     % whtndsignal = (1/sqrt(params.signal.sampling_freq))*ifft(fft(signal).*(TFtotal));
+%     whtndsignal = ifft(fft(signal).*(TFtotal));
+%     whtndfiltdata = whtndfiltdata + whtndsignal;
+%     disp(['cond_mfdata- injected signal with snr: ', num2str(params.signal.snr)])
+% end
 fftdataYbyPSD = fft(whtndfiltdata).*TFtotal.*params.A;
 
 % Optional plotting to check for proper signal injection
@@ -56,12 +69,12 @@ fftdataYbyPSD = fft(whtndfiltdata).*TFtotal.*params.A;
 %% Create General Normalization Factor
 AbysqrtPSD = params.A.*TFtotal;
 innProd = (1/params.N)*(AbysqrtPSD)*AbysqrtPSD';
-genNormfac = 1/sqrt(real(innProd));
+params.normfac = 1/sqrt(real(innProd));
 
 %% Saving Files
 params.dataY = dataY;
 params.fftdataYbyPSD = fftdataYbyPSD;
-params.normfac = genNormfac;
+% params.normfac = genNormfac;
 if nargout > 0
     varargout{1} = params;
     if nargout > 1
@@ -72,6 +85,8 @@ if nargout > 0
     end
 end
 % save(jobParams.outFileData,"fftdataYbyPSD",'TFtotal','dataY');
-save(paramsFileName,'params','-append')
-disp(['cond_mfdata- Parameters MaJ with conditioned data and saved to: ',paramsFileName])
+if ~isempty(paramsData) && ~isstruct(paramsData)
+    save(paramsData,'params','-append')
+    disp(['cond_mfdata- Parameters MaJ with conditioned data and saved to: ',paramsData])
+end
 end
