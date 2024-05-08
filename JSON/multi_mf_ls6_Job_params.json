@@ -13,9 +13,9 @@
 "psoParamsjson":"pso.json",
 "signalParamsjson":"signal.json",
 "injSig":1,
-"jbTime": 3,
-"nNodes": 2,
-"nJbsPerNode": 6,
+"jbTime": 2,
+"nNodes": 3,
+"nJbsPerNode": 4,
 "qType":"normal",
 "email":"thomas.cruz03@utrgv.edu"
   }
