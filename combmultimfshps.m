@@ -28,8 +28,8 @@ interFileNameList = inFilesList(1:nFiles,2);
 outFileNameList = inFilesList(1:nFiles,3);
 
 %Outgoing data files
-dataFileList = outFilesList(1:nFiles,1);
-shpsDataFileList = outFilesList(1:nFiles,2);
+dataFileList = outFilesList(1:nFiles,1)
+shpsDataFileList = outFilesList(1:nFiles,2)
 
 %% Data Loop 
 combData = cell(nFiles,5);
