@@ -85,7 +85,7 @@ paramsFileList = cell(jobParams.inFileDataRange(2),1);
 paramsFileshpsList = cell(jobParams.inFileDataRange(2),1);
 dataFileList = cell(jobParams.inFileDataRange(2),1);
 shpsDataFileList = cell(jobParams.inFileDataRange(2),1);
-for fileCount = 1:jobParams.inFileDataRange(2)
+for fileCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
     paramsFileList{fileCount} = [paramsFile,'_n',...
         num2str(fileCount),'.mat'];
     paramsFileshpsList{fileCount} = [paramsFileshps,'_n',...

@@ -73,7 +73,7 @@ interFileNameList = cell(jobParams.inFileDataRange(2),1);
 outFileNameList = cell(jobParams.inFileDataRange(2),1);
 paramsFileList = cell(jobParams.inFileDataRange(2),1);
 paramsFileshpsList = cell(jobParams.inFileDataRange(2),1);
-for fileCount = 1:jobParams.inFileDataRange(2)
+for fileCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
     %Time series initial file
     inFileNameList{fileCount} = [jobParams.inFileDataPrFx,...
         num2str(fileCount),'.mat'];

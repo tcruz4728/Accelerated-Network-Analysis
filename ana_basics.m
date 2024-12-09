@@ -167,16 +167,15 @@ if pltCtrl == 2 || pltCtrl == 12
     title('PSD of Training Segment')
     saveas(gcf,[filepaths.figs,'Training_PSD']);
 end
-%% SHAPES PSD estimate - takes the pwelch PSD (not the log version!) and 
-% returns in the same form
-% input: inFilePSD - training segment PSD from load_mtchdfltrdata.m
+%% SHAPES PSD estimate - takes pwelch linear PSD and returns in same form
+% input: inFilePSD - training segment PSD from load_mfdata.m
 % output: inFileshpsPSD - shapes estimation of training segment PSD
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.d,fidprog,progCtrl); end
 drase4lines(jobParams,outdataFilePrfx,filepaths.figs);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 
 %% Interpolation - Takes log10 of PSDs, interpolates and inverses the log 
-%input: outData/inFilePSD - data structure from load_mtchdfltrdata.m
+%input: outData/inFilePSD - data structure from load_mfdata.m
 %output: inFilePSD - appending the interpolated PSD
 createPSD(outData.PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.inFilePSD);
 
