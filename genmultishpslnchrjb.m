@@ -104,7 +104,7 @@ fidparamsFileList = fopen([outdataFilePrfx,'_paramsFilesList.txt'],'w');
 disp(['Parameter File list created: ',outdataFilePrfx,'_paramsFilesList.txt'])
 
 nJobs = 1;
-for nCount = 1:fileCount
+for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
     fprintf(fidJbFile,'matlab -batch ');
     %path to jsonlab,
     fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
@@ -114,7 +114,7 @@ for nCount = 1:fileCount
     fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
     %Data Load
     fprintf(fidJbFile,' load_mfdata(''%s'',''%s'',''%s''); ',...
-        inFileNameList{nCount},interFileNameList{nCount},jobParams.injSig);
+        inFileNameList{nCount},interFileNameList{nCount},num2str(jobParams.injSig));
     %SHAPES call 
     fprintf(fidJbFile,' drase4lines(''%s'',''%s'',''%s'',''%s'',''%s''); ',...
         jobParamsFile,outdataFilePrfx,filepaths.end,...

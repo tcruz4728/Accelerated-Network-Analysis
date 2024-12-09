@@ -104,7 +104,7 @@ fidOutFileList = fopen([outdataFilePrfx,'_outFilesList.txt'],'w');
 disp(['Output File list created: ',outdataFilePrfx,'_outFilesList.txt'])
 
 nJobs = 1;
-for nCount = 1:fileCount
+for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
     for runType = 1:2
         %  PSO and drase command on input file.
         fprintf(fidJbFile,'matlab -batch ');
