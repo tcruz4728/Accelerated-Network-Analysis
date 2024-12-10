@@ -53,8 +53,8 @@ end
 if isstruct(inFileData)
     dataY = inFileData.dataY;
     tIntrvl = inFileData.tIntrvl;
-    dsstPSD = inFileData.dsstPSD;
-    dsstfreqVec = inFileData.dsstfreqVec;
+    % dsstPSD = inFileData.dsstPSD;
+    % dsstfreqVec = inFileData.dsstfreqVec;
     nSamples = length(dataY);
 else
     [~,~,fileExt] = fileparts(inFileData);
@@ -67,7 +67,8 @@ else
             nSamples = double(h5readatt(inFileData,'/strain/Strain','Npoints'));
             tIntrvl = double(h5readatt(inFileData,'/strain/Strain','Xspacing')); %Time Interval
         case '.mat'
-            load(inFileData,'dataY','tIntrvl','dsstPSD','dsstfreqVec','injSigparams');
+            % load(inFileData,'dataY','tIntrvl','dsstPSD','dsstfreqVec','injSigparams');
+            load(inFileData,'dataY','tIntrvl','injSigparams');
             disp(['load_mfdata- ',inFileData])
             nSamples = length(dataY);
             % figure;
