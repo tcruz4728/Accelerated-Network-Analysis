@@ -53,8 +53,8 @@ end
 if isstruct(inFileData)
     dataY = inFileData.dataY;
     tIntrvl = inFileData.tIntrvl;
-    % dsstPSD = inFileData.dsstPSD;
-    % dsstfreqVec = inFileData.dsstfreqVec;
+    dsstPSD = inFileData.dsstPSD;
+    dsstfreqVec = inFileData.dsstfreqVec;
     nSamples = length(dataY);
 else
     [~,~,fileExt] = fileparts(inFileData);
@@ -67,8 +67,8 @@ else
             nSamples = double(h5readatt(inFileData,'/strain/Strain','Npoints'));
             tIntrvl = double(h5readatt(inFileData,'/strain/Strain','Xspacing')); %Time Interval
         case '.mat'
-            % load(inFileData,'dataY','tIntrvl','dsstPSD','dsstfreqVec','injSigparams');
-            load(inFileData,'dataY','tIntrvl','injSigparams');
+            load(inFileData,'dataY','tIntrvl','dsstPSD','dsstfreqVec','injSigparams');
+            % load(inFileData,'dataY','tIntrvl','injSigparams');
             disp(['load_mfdata- ',inFileData])
             nSamples = length(dataY);
             % figure;
@@ -143,11 +143,12 @@ outData = struct('PSD',PSD,'freqVec',freqVec, ...
     'dataY',dataY,'sampFreq', sampFreq, ...
     'freqBnd',freqBnd,'tlen',tlen,...
     'tseriestrainSeg',tseriestrainSeg,...
+    'dsstPSD',dsstPSD,'dsstfreqVec',dsstfreqVec,...
     'injectedSignal',injSigparams.signal.data);
 varargout{1} = outData;
 
 if ~isempty(inFilePSD)
     save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
-        'freqBnd','tlen','injSigparams')
+        'freqBnd','tlen','dsstPSD','dsstfreqVec','injSigparams')
     disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
 end
