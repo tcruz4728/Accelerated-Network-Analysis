@@ -21,9 +21,9 @@ function [] = genmultipsolnchrjb(path2jsonlab,jobParamsFile,varargin)
 % "inFileDataRange":"<1x2 array giving the range of values from which the
 %       full file names of data realizations, i.e. [1, 5] will have 5 data
 %       realizations loaded in and estimated.>",
-% "inFilePSD":"<path to the file containing the pwelch estimated PSD
+% "inFile":"<path to the file containing the pwelch estimated PSD
 %       training data>",
-% "inFileshpsPSD":"<path to the file containing SHAPES estimated PSD
+% "outFile":"<path to the file containing SHAPES estimated PSD
 %       training data>",
 % "outDir":"<path to directory where all output files will be stored, a
 %       subdirectory for the current date is created under this directory. 

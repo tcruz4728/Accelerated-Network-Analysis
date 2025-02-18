@@ -16,8 +16,8 @@ function [paramsFile,outdataFilePrfx,varargout] = ana_basics(jobParams,userUID,v
 % "path2drase":"<path to the DRASE directory>",
 % "path2pso":"<path to the PSO directory>",
 % "path2shapes":"<path to the SHAPES directory>",
-% "inFilePSD":"<path to the file containing pwelch PSD training data>",
-% "inFileshpsPSD":"<path to the file containing SHAPES estimated PSD
+% "inFile":"<path to the file containing pwelch PSD training data>",
+% "outFile":"<path to the file containing SHAPES estimated PSD
 % training data>",
 % "outFilePSD":"<path to the file containing pwelch PSD training data to be
 % run by rungwpso>",
@@ -144,9 +144,9 @@ if ~isempty(anabreak) && anabreak == 2
 end
 %% Data Load - loads time-series performs bandpass, computes training segment PSD
 % input: inFileData - time series data from LIGO or simulations
-% output: inFilePSD - training segment PSD
+% output: inFile - training segment PSD
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.l,fidprog,progCtrl); end
-outData = load_mfdata(jobParams.inFileData,jobParams.inFilePSD,jobParams.injSig);
+outData = load_mfdata(jobParams.inFileData,jobParams.inFile,jobParams.injSig);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 %% Glitch Checking - Visual clarification with spectrogram
 if pltCtrl == 1 || pltCtrl == 12
@@ -168,33 +168,33 @@ if pltCtrl == 2 || pltCtrl == 12
     saveas(gcf,[filepaths.figs,'Training_PSD']);
 end
 %% SHAPES PSD estimate - takes pwelch linear PSD and returns in same form
-% input: inFilePSD - training segment PSD from load_mfdata.m
-% output: inFileshpsPSD - shapes estimation of training segment PSD
+% input: inFile - training segment PSD from load_mfdata.m
+% output: outFile - shapes estimation of training segment PSD
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.d,fidprog,progCtrl); end
 drase4lines(jobParams,outdataFilePrfx,filepaths.figs);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 
 %% Interpolation - Takes log10 of PSDs, interpolates and inverses the log 
-%input: outData/inFilePSD - data structure from load_mfdata.m
-%output: inFilePSD - appending the interpolated PSD
-createPSD(outData.PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.inFilePSD);
+%input: outData/inFile - data structure from load_mfdata.m
+%output: inFile - appending the interpolated PSD
+createPSD(outData.PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.inFile);
 
-%input: inFileshpsPSD - estimated PSD from drase
-%output: inFileshpsPSD - appending the interpolated shpsPSD
-load(jobParams.inFileshpsPSD,"PSD")
-createPSD(PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.inFileshpsPSD);
+%input: outFile - estimated PSD from drase
+%output: outFile - appending the interpolated shpsPSD
+load(jobParams.outFile,"PSD")
+createPSD(PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.outFile);
 
 %% Condition Data and Compute FFTs
-%inputs: inFilePSD - interpolated PSD highpassed time series
+%inputs: inFile - interpolated PSD highpassed time series
 %output: paramsFile - updated from gwpsoparams with fft
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.w,fidprog,progCtrl); end
-cond_mfdata(jobParams.inFilePSD,paramsFile);
+cond_mfdata(jobParams.inFile,paramsFile);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
         
-%inputs: inFileshpsPSD - interpolated shps PSD & inFilePSD - highpassed time series
+%inputs: outFile - interpolated shps PSD & inFile - highpassed time series
 %output: paramsFileshps - updated from gwpsoparams with fft
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.s,fidprog,progCtrl); end
-cond_mfdata(jobParams.inFileshpsPSD,paramsFileshps);
+cond_mfdata(jobParams.outFile,paramsFileshps);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 
 %Display file names

@@ -22,8 +22,8 @@
 },
 "signal": 
     {
-"T_sig_len": 512,
-"T_sig": 54,
+"T_sig_len": 32,
+"T_sig": 10,
 "num": 1,
 "noise": 1
 }

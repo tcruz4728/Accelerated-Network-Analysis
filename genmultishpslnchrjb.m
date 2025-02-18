@@ -22,9 +22,9 @@ function [outFileNameList] = genmultishpslnchrjb(path2jsonlab,jobParamsFile,vara
 % "inFileDataRange":"<1x2 array giving the range of values from which the
 %       full file names of data realizations, i.e. [1, 5] will have 5 data
 %       realizations loaded in and estimated.>",
-% "inFilePSD":"<path to the file containing the pwelch estimated PSD
+% "inFile":"<path to the file containing the pwelch estimated PSD
 %       training data>",
-% "inFileshpsPSD":"<path to the file containing SHAPES estimated PSD
+% "outFile":"<path to the file containing SHAPES estimated PSD
 %       training data>",
 % "outDir":"<path to directory where all output files will be stored, a
 %       subdirectory for the current date is created under this directory. 
@@ -66,8 +66,8 @@ jobParams = loadjson(jobParamsFile);
 %% File Naming Convention
 [paramsFile,outdataFilePrfx,filepaths] = ana_basics(jobParams,varargin{1},[],2);
 paramsFileshps = [paramsFile,'shps'];
-[interFilePath,interFileName,~] = fileparts(jobParams.inFilePSD);
-[outFilePath,outFileName,~] = fileparts(jobParams.inFileshpsPSD);
+[interFilePath,interFileName,~] = fileparts(jobParams.inFile);
+[outFilePath,outFileName,~] = fileparts(jobParams.outFile);
 inFileNameList = cell(jobParams.inFileDataRange(2),1);
 interFileNameList = cell(jobParams.inFileDataRange(2),1);
 outFileNameList = cell(jobParams.inFileDataRange(2),1);
@@ -77,10 +77,10 @@ for fileCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
     %Time series initial file
     inFileNameList{fileCount} = [jobParams.inFileDataPrFx,...
         num2str(fileCount),'.mat'];
-    %Pwelch data file (inFilePSD-goes into SHAPES)
+    %Pwelch data file (inFile-goes into SHAPES)
     interFileNameList{fileCount} = [interFilePath,filesep,...
         interFileName,'_n',num2str(fileCount),'.mat'];
-    %SHAPES estimated PSD data file (inFileshpsPSD)
+    %SHAPES estimated PSD data file (outFile)
     outFileNameList{fileCount} = [outFilePath,filesep,...
         outFileName,'_n',num2str(fileCount),'.mat'];
     %Pwelch params files
