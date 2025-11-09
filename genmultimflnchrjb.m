@@ -1,15 +1,17 @@
-function [] = genmultipsolnchrjb(path2jsonlab,jobParamsFile,varargin)
-%GENMULTIPSOLNCHRJB(J,P)
-%Generates a .slurm file containing a LAUNCHER job for matched filtering of
-%both pwelch PSDs and SHAPES estimated PSDs. J is the path to the jsonlab
-%package. If set to '', the jsonlab package is assumed to be in the Matlab
-%search path. Note that this search path must be accessible from every
-%compute node, which cannot always be guaranteed. Hence it is safer to
-%specify the path explicitly.
+function [] = genmultimflnchrjb(path2jsonlab,jobParamsFile,varargin)
+%GENMULTIMFLNCHRJB(J,P)
+% Generates a .slurm file containing a LAUNCHER job for matched filtering
+% of both pwelch PSDs and (optional) SHAPES estimated PSDs. It is necessary
+% to 1st run genmultipremflnchrjb.m before this function to have the proper
+% parameter files created and to condition time-series data for MF.
+% J is the path to the jsonlab package. If set to '', the jsonlab package
+% is assumed to be in the Matlab search path. Note that this search path
+% must be accessible from every compute node, which cannot always be
+% guaranteed. Hence it is safer to specify the path explicitly.
 %
-%P is a JSON file containing the following job parameters. Text in <>
-%should be replaced by an appropriate value. Examples are shown for some of
-%the parameters.
+% P is a JSON file containing the following job parameters. Text in <>
+% should be replaced by an appropriate value. Examples are shown for some
+% of the parameters.
 %   {
 % "jobName":"<a name for this job which will become the prefix for file
 %            names>",
@@ -44,15 +46,23 @@ function [] = genmultipsolnchrjb(path2jsonlab,jobParamsFile,varargin)
 % "email":"<email address>"
 %   }
 % }
-% Optional Input Argument
-%GENMULTIPSOLNCHRJB(J,P,U)
+% Optional Input Arguments
+%GENMULTIMFLNCHRJB(J,P,U,D,S)
 % U is an unique ID number that is used when creating a folder under the
 % outfile directory. If specified, it uses that value with the format %05d,
 % i.e. U = 1, out directory is <outDir>/00001. Can be used to overwrite
-% preexisiting data(provided the date is the same) if an already used UID is
-% specified.
+% preexisiting data(provided the date is the same) if an already used UID
+% is specified.
+% D is a date specifying variable which if not set, uses the current date
+% for folder indexing. Date formats are written as '01-Jan-2000'
+% S is the SHAPES control parameter which determines whether matched
+% filtering Jobs will be created for a SHAPES estimated PSD in addition to
+% the norm. S = 1 is the default which creates the SHAPES jobs, set to 0
+% to disable SHAPES jobs.
 
-%Modified from genlineshpslnchrjb, Aug 2023 for ANA use
+% Modified from genlineshpslnchrjb, Aug 2023 for ANA use
+% Modified name from genmultipsolnchrjb.m to better match function purpose,
+% Jul 2025
 
 %Add path to jsonlab
 addpath(path2jsonlab);
@@ -63,6 +73,8 @@ jobParams = loadjson(jobParamsFile);
 %Optionals for ana_basics setup
 userUID = 1;
 datad = [];
+shpsCtrl = 1;
+
 %Override the file name if optional input given
 nreqArgs = 2;
 for lpargs = 1:(nargin-nreqArgs)
@@ -72,6 +84,8 @@ for lpargs = 1:(nargin-nreqArgs)
                 userUID = varargin{lpargs};
             case 2
                 datad = varargin{lpargs};
+            case 3
+                shpsCtrl = varargin{lpargs};
         end
     end
 end
@@ -80,20 +94,27 @@ end
 
 %% ANA prep package
 [paramsFile,outdataFilePrfx] = ana_basics(jobParams,userUID,datad,1);
-paramsFileshps = [paramsFile,'shps'];
+
 paramsFileList = cell(jobParams.inFileDataRange(2),1);
-paramsFileshpsList = cell(jobParams.inFileDataRange(2),1);
 dataFileList = cell(jobParams.inFileDataRange(2),1);
-shpsDataFileList = cell(jobParams.inFileDataRange(2),1);
+
+if shpsCtrl == 1
+    paramsFileshps = [paramsFile,'shps'];
+    paramsFileshpsList = cell(jobParams.inFileDataRange(2),1);
+    shpsDataFileList = cell(jobParams.inFileDataRange(2),1);
+end
+
 for fileCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
     paramsFileList{fileCount} = [paramsFile,'_n',...
         num2str(fileCount),'.mat'];
-    paramsFileshpsList{fileCount} = [paramsFileshps,'_n',...
-        num2str(fileCount),'.mat'];
     dataFileList{fileCount} = [outdataFilePrfx,'_n',...
         num2str(fileCount),'C'];
-    shpsDataFileList{fileCount} = [outdataFilePrfx,'_n',...
-        num2str(fileCount),'shps_C'];
+    if shpsCtrl == 1
+        paramsFileshpsList{fileCount} = [paramsFileshps,'_n',...
+            num2str(fileCount),'.mat'];
+        shpsDataFileList{fileCount} = [outdataFilePrfx,'_n',...
+            num2str(fileCount),'shps_C'];
+    end
 end
 % fidShpsOutFileList = fopen([outdataFilePrfx,'shpsoutFilesList.txt'],'r');
 %% Constuct job file for Launcher
@@ -105,7 +126,7 @@ disp(['Output File list created: ',outdataFilePrfx,'_outFilesList.txt'])
 
 nJobs = 1;
 for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
-    for runType = 1:2
+    for runType = 1:(1+shpsCtrl)
         %  PSO and drase command on input file.
         fprintf(fidJbFile,'matlab -batch ');
         %path to jsonlab,
@@ -126,9 +147,14 @@ for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
         % Count number of jobs
         nJobs = nJobs + 1;
     end
-    fprintf(fidOutFileList,'%s  %s\n',...
-        dataFileList{nCount},...
-        shpsDataFileList{nCount});    
+    fprintf(fidOutFileList,'%s',...
+        dataFileList{nCount});
+    if runType == 2
+        fprintf(fidOutFileList,'  %s\n',...
+        shpsDataFileList{nCount});
+    else
+        fprintf(fidOutFileList,'\n');
+    end
 end
 fclose(fidOutFileList);
 fclose(fidJbFile);

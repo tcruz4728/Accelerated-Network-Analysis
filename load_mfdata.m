@@ -8,10 +8,10 @@ function varargout = load_mfdata(inFileData,inFilePSD,varargin)
 % using the first 32 or 60 seconds of the high-passed time series data
 % using a Tukey window with window length 4*sampFreq.
 % Saves the following varaibles to P designated in D as a .mat file:
-%   'PSD'-      Power Spectral Density of high-passed unwhitened time
+%   'PSD'-      Power Spectral Density of high-passed unwhitened time-
 %               series data using pwelch.m.
 %   'freqVec'-  Frequency Vector to PSD in Hz.
-%   'dataY'-    High-passed unwhitened time series data.
+%   'dataY'-    High-passed unwhitened time-series data, row vector
 %   'sampFreq'- Sampling Frequency (Hz).
 %   'freqBnd'-  Frequency bounds of interest, used later to filter.
 %   'tlen'-     Length of the time series in seconds.
@@ -53,8 +53,6 @@ end
 if isstruct(inFileData)
     dataY = inFileData.dataY;
     tIntrvl = inFileData.tIntrvl;
-    dsstPSD = inFileData.dsstPSD;
-    dsstfreqVec = inFileData.dsstfreqVec;
     nSamples = length(dataY);
 else
     [~,~,fileExt] = fileparts(inFileData);
@@ -67,13 +65,12 @@ else
             nSamples = double(h5readatt(inFileData,'/strain/Strain','Npoints'));
             tIntrvl = double(h5readatt(inFileData,'/strain/Strain','Xspacing')); %Time Interval
         case '.mat'
-            load(inFileData,'dataY','tIntrvl','dsstPSD','dsstfreqVec','injSigparams');
-            % load(inFileData,'dataY','tIntrvl','injSigparams');
+            load(inFileData,'dataY','tIntrvl')
+            if ~isrow(dataY)
+                dataY = dataY';
+            end
             disp(['load_mfdata- ',inFileData])
             nSamples = length(dataY);
-            % figure;
-            % plot(dsstfreqVec,log10(dsstPSD),'k')
-            % hold on
     end
 end
 
@@ -88,6 +85,7 @@ if sampFreq == 16384
 end
 %% Signal Injection
 if ~isempty(sigInjChk)
+    load(inFileData,'injSigparams')
     % negFStrt = 1-mod(nSamples,2);
     % kNyq = floor(nSamples/2)+1;
     % Compute two-sided PSD from design sensitivity PSD for signal injection
@@ -123,8 +121,10 @@ dataY = dataY_highpass;
 
 %% Time series training segment generation
 strtTime = floor(10*sampFreq);
-if  tlen < 60
+if  tlen < 60 && tlen > 32
     endTime = strtTime + floor(32/tIntrvl);
+elseif tlen <= 32
+    endTime = strtTime + floor(tlen/(4*tIntrvl));
 else
     endTime = strtTime + floor(60/tIntrvl);
 end
@@ -133,22 +133,53 @@ tseriestrainSeg = dataY_highpass(strtTime:endTime);
 %% Pwelch PSD estimation
 winVec = tukeywin(4*sampFreq);
 [PSD,freqVec] = pwelch(tseriestrainSeg,winVec,[],[],sampFreq);
-PSD = PSD.'/2; %outputs need to be column vectors, /2 to convert to 2-sided psd
-freqVec = freqVec.';
+
+%outputs need to be column vectors, 
+if ~iscolumn(PSD)
+    % /2 to convert to 2-sided psd
+    PSD = PSD.'/2;
+else
+    PSD = PSD/2;
+end
+
+if ~iscolumn(freqVec)
+    freqVec = freqVec.';
+end
+
 % plot(freqVec,log10(PSD),'b')
 freqBnd = [strtFreq,endFreq]; 
 
 %% Outputs
+% if genSig == 1
+%     outData = struct('PSD',PSD,'freqVec',freqVec, ...
+%         'dataY',dataY,'sampFreq', sampFreq, ...
+%         'freqBnd',freqBnd,'tlen',tlen,...
+%         'tseriestrainSeg',tseriestrainSeg,...
+%         'dsstPSD',dsstPSD,'dsstfreqVec',dsstfreqVec,...
+%         'injectedSignal',injSigparams.signal.data,'genSig',genSig);
+% else
+
 outData = struct('PSD',PSD,'freqVec',freqVec, ...
     'dataY',dataY,'sampFreq', sampFreq, ...
     'freqBnd',freqBnd,'tlen',tlen,...
-    'tseriestrainSeg',tseriestrainSeg,...
-    'dsstPSD',dsstPSD,'dsstfreqVec',dsstfreqVec,...
-    'injectedSignal',injSigparams.signal.data);
+    'tseriestrainSeg',tseriestrainSeg);
+if ~isempty(sigInjChk)
+    outData.injectedSignal = injSigparams.signal.data;
+end
+
 varargout{1} = outData;
 
+% if ~isempty(inFilePSD) && genSig == 1
+%     save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
+%         'freqBnd','tlen','dsstPSD','dsstfreqVec','injSigparams')
+%     disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
 if ~isempty(inFilePSD)
-    save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
-        'freqBnd','tlen','dsstPSD','dsstfreqVec','injSigparams')
-    disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
+        save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
+        'freqBnd','tlen')
+        if ~isempty(sigInjChk)
+            save(inFilePSD,'injSigparams',"-append")
+        end
+        disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
 end
+
+
