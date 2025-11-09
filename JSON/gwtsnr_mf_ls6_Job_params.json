@@ -1,0 +1,21 @@
+  {
+"jobName":"gwtsnr_mf_ls6_Job",
+"path2project":"/work/08302/tcruz/Accelerated-Network-Analysis",
+"path2drase":"/work/08302/tcruz/DRASE",
+"path2pso":"/work/08302/tcruz/SDMBIGDAT19/CODES",
+"path2shapes":"/work/08302/tcruz/SHAPES-tcruz",
+"inFileDataPrFx":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/sampledtsData",
+"inFileDataRange":[1, 2],
+"inFile":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/pwPSD.mat",
+"outFile":"/work/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/estPSD.mat",
+"outDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
+"scrtchDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
+"psoParamsjson":"pso.json",
+"signalParamsjson":"signal.json",
+"injSig":"",
+"jbTime": 1,
+"nNodes": 1,
+"nJbsPerNode": 8,
+"qType":"normal",
+"email":"thomas.cruz03@utrgv.edu"
+  }
