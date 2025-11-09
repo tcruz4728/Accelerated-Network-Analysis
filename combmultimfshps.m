@@ -4,10 +4,10 @@ function combmultimfshps(outdataFilePrfx,inFileList,outFileList)
 % D- the output file data prefix given to the files that are saved.
 % I- the input file list used in the 1st ls6 job with SHAPES, contains N
 % lines corresponding to the N files with data realizations. Needs to match
-% the file created by genmultishpslnchrjb.m
+% the file created by genmultipremflnchrjb.m
 % O- the output file list used in the 2nd ls6 job with rungwpso, contains N
 % lines corresponding to the N files with PSD estimates. Needs to match the
-% file created by genmultipsolnchrjb.m
+% file created by genmultimflnchrjb.m
 %
 % Modified from combsplitlinesshps to work with ANA data
 %
@@ -28,8 +28,8 @@ interFileNameList = inFilesList(1:nFiles,2);
 outFileNameList = inFilesList(1:nFiles,3);
 
 %Outgoing data files
-dataFileList = outFilesList(1:nFiles,1)
-shpsDataFileList = outFilesList(1:nFiles,2)
+dataFileList = outFilesList(1:nFiles,1);
+shpsDataFileList = outFilesList(1:nFiles,2);
 
 %% Data Loop 
 combData = cell(nFiles,5);

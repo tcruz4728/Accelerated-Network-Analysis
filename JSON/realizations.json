@@ -1,9 +1,9 @@
   {
       "path2sensitivitydata":"TMPPSDDATA/",
       "extGenFilename":"/TMPPSDDATA/data_realizations_10Nov2023.mat",
-      "datalen":512,
+      "datalen":32,
       "ta":138,
       "sampFreq":4096,
-      "nRealizations":12,
+      "nRealizations":3,
       "dataGenType":2
   }
