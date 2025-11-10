@@ -169,13 +169,9 @@ end
 
 varargout{1} = outData;
 
-% if ~isempty(inFilePSD) && genSig == 1
-%     save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
-%         'freqBnd','tlen','dsstPSD','dsstfreqVec','injSigparams')
-%     disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
 if ~isempty(inFilePSD)
         save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
-        'freqBnd','tlen')
+        'freqBnd','tlen', "-v7.3")
         if ~isempty(sigInjChk)
             save(inFilePSD,'injSigparams',"-append")
         end

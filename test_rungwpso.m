@@ -9,7 +9,7 @@ addpath(path2jsonlab)
 addpath("References\")
 %Job File 
 % jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\multi_shps_PC_Job_params.json';
-jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\gwtsnr_shps_PC_Job_params.json';
+jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\gwtsnr_premf_PC_Job_params.json';
 %Load job parameters
 jobParams = loadjson(jobParamsFile);
 % for filecount = 1:jobParams.inFileDataRange(end)
