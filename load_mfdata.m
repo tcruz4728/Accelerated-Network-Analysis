@@ -28,7 +28,6 @@ function varargout = load_mfdata(inFileData,inFilePSD,varargin)
 %
 % See also pwelch, tukeywin, highpass
 
-
 %% Default Parameters
 strtFreq = 30; % Low Frequency cutoff, or starting frequency
 endFreq = 700; % High Frequency cutoff, or ending frequency
@@ -86,30 +85,6 @@ end
 %% Signal Injection
 if ~isempty(sigInjChk)
     load(inFileData,'injSigparams')
-    % negFStrt = 1-mod(nSamples,2);
-    % kNyq = floor(nSamples/2)+1;
-    % Compute two-sided PSD from design sensitivity PSD for signal injection
-    % dsstPSDtotal = [dsstPSD, dsstPSD((kNyq-negFStrt):-1:2)];
-    % PSDtotal = [interpPSD,interpPSD((kNyq-negFStrt):-1:2)];
-    % dsstTFtotal = 1./sqrt(dsstPSDtotal);
-    % AbysqrtPSD = params.A.*dsstTFtotal;
-    % innProd = (1/params.N)*(AbysqrtPSD)*AbysqrtPSD';
-    % params.normfac = 1/sqrt(real(innProd));
-    % [params.data] = sigInj(params,dsstPSDtotal);
-    %(Alternative)
-    % signal = gen2PNtemplate_mass(params,params.signal.ta,0,...
-    %     [params.gwCoefs,1],params.signal.snr,dsstPSDtotal);
-
-    %q0 & q1 are phases for testing if the signal can be detected by mf
-    % q0 = gen2PNtemplate_mass(params,0,0,[params.gwCoefs,1],1,dsstPSDtotal);
-    % q1 = gen2PNtemplate_mass(params,0,pi/2,[params.gwCoefs,1],1,dsstPSDtotal);
-
-    %Whiten the signal using the transfer function from PSD (pwelch or
-    %shps)
-    % whtndsignal = (1/sqrt(params.signal.sampling_freq))*ifft(fft(signal).*(TFtotal));
-    % whtndsignal = ifft(fft(signal).*(TFtotal));
-    % whtndfiltdata = whtndfiltdata + whtndsignal;
-    % disp(num2str(normfac))
     dataY = dataY + injSigparams.signal.data;
     disp(['load_mfdata- Injected signal with snr: ', num2str(injSigparams.signal.snr)])
 end
@@ -134,12 +109,11 @@ tseriestrainSeg = dataY_highpass(strtTime:endTime);
 winVec = tukeywin(4*sampFreq);
 [PSD,freqVec] = pwelch(tseriestrainSeg,winVec,[],[],sampFreq);
 
-%outputs need to be column vectors, 
+PSD = PSD/2; % /2 to convert to 2-sided psd
+
+%outputs need to be column vectors
 if ~iscolumn(PSD)
-    % /2 to convert to 2-sided psd
-    PSD = PSD.'/2;
-else
-    PSD = PSD/2;
+    PSD = PSD.';
 end
 
 if ~iscolumn(freqVec)
@@ -170,7 +144,7 @@ end
 varargout{1} = outData;
 
 if ~isempty(inFilePSD)
-    whos('PSD','freqVec','dataY','sampFreq')
+    whos('PSD','freqVec','dataY','sampFreq') % debugging
     save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
         'freqBnd','tlen', "-v7.3")
     if ~isempty(sigInjChk)
