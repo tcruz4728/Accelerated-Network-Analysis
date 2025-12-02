@@ -7,12 +7,11 @@ function genanarealization(path2json,outDir)
 % files or creating data from sensitivity data.
 %
 % Inputs:
-%   inFileParams - A JSON file path containing parameters for the 
-%                  generation process, including paths to other JSON files 
-%                  for PSO and signal parameters.
-%   varargin - Optional argument to specify the output directory. If not 
-%              provided, the output directory is taken from the input 
-%              parameters.
+%   path2json - A string representing the path to the JSON file containing 
+%               parameters for the generation process.
+%   outDir - A string specifying the output directory where generated 
+%            data realizations will be saved. Should end in OS file
+%            separator.
 %
 % Outputs:
 %   The function saves generated data realizations as .mat files in the 
@@ -22,6 +21,8 @@ function genanarealization(path2json,outDir)
 %
 % Example usage:
 %   genanarealization('params.json', 'output_directory')
+
+%% Pathing and parameter loads
 addpath(path2json)
 params = loadjson('realizations.json');
 psoParams = loadjson('pso.json');
@@ -54,6 +55,11 @@ injSigparams = gwpsoparams(psoParams,signalParams,0);
 injSigparams.signal.data = sigInj(injSigparams,dsstPSDtotal);
 
 %% File Saving
+if(exist(fullfile(outDir,'TMPPSDDATA'),"dir")~=7)
+    cd(outDir)
+    mkdir('TMPPSDDATA');
+end
+
 for i = 1:size(data_realizations,1)
     dataY = data_realizations(i,:);
     save([outDir,'TMPPSDDATA',filesep,...
@@ -63,7 +69,7 @@ for i = 1:size(data_realizations,1)
         "dataY","tIntrvl","dsstPSD","dsstfreqVec","injSigparams")
 end
 disp(['dataRealizationgenmat- Saved ',num2str(size(data_realizations,1)),...
-    ' data files to ',filesep,outDir,filesep,'TMPPSDDATA',...
+    ' data files to ',filesep,outDir,'TMPPSDDATA',...
     filesep,...
     ' as realization_',num2str(sigparams.datalen),...
         's_inj',num2str(sigparams.ta),...
