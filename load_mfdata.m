@@ -146,7 +146,7 @@ varargout{1} = outData;
 if ~isempty(inFilePSD)
     whos('PSD','freqVec','dataY','sampFreq') % debugging
     save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
-        'freqBnd','tlen', "-v7.3")
+        'freqBnd','tlen', "-v7")
     if ~isempty(sigInjChk)
         save(inFilePSD,'injSigparams',"-append")
     end
