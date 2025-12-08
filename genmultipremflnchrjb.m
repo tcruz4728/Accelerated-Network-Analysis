@@ -136,7 +136,7 @@ disp(['Parameter File list created: ',outdataFilePrfx,'_paramsFilesList.txt'])
 
 nJobs = 1;
 for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
-    for runType = 1:(1+shpsCtrl)
+    % for runType = 1:(1+shpsCtrl)
     fprintf(fidJbFile,'matlab -batch ');
     %path to jsonlab,
     fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
@@ -179,7 +179,7 @@ for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
         fprintf(fidparamsFileList,'\n');
     end
     nJobs = nJobs +1;
-    end
+    % end
 end
 fclose(fidJbFile);
 fclose(fidparamsFileList);
