@@ -27,7 +27,7 @@ userUID = 1;
 datad = [];
 
 %Override the file name if optional input given
-nreqArgs = 2;
+nreqArgs = 4;
 for lpargs = 1:(nargin-nreqArgs)
     if ~isempty(varargin{lpargs})
         switch lpargs
