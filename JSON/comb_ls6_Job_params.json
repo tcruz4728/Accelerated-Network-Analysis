@@ -1,0 +1,9 @@
+  {
+"jobName":"comb_ls6_Job",
+"scrtchDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
+"jbTime": 1,
+"nNodes": 2,
+"nJbsPerNode": 8,
+"qType":"normal",
+"email":"thomas.cruz03@utrgv.edu"
+  }
