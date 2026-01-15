@@ -2,6 +2,7 @@
 "jobName":"comb_ls6_Job",
 "path2project":"/work/08302/tcruz/Accelerated-Network-Analysis",
 "path2drase":"/work/08302/tcruz/DRASE",
+"path2pso":"/work/08302/tcruz/SDMBIGDAT19/CODES",
 "scrtchDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
 "psoParamsjson":"pso.json",
 "signalParamsjson":"signal.json",
