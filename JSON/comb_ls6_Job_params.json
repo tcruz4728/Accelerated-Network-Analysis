@@ -5,6 +5,7 @@
 "path2aline":"/work/08302/tcruz/ALINE",
 "path2pso":"/work/08302/tcruz/SDMBIGDAT19/CODES",
 "path2shapes":"/work/08302/tcruz/SHAPES-tcruz",
+"outDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
 "scrtchDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
 "psoParamsjson":"pso.json",
 "signalParamsjson":"signal.json",
