@@ -6,7 +6,7 @@
 "path2pso":"/work/08302/tcruz/SDMBIGDAT19/CODES",
 "path2shapes":"/work/08302/tcruz/SHAPES-tcruz",
 "inFileDataPrFx":"/scratch/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/realization_512s_inj138_fs4096_n",
-"inFileDataRange":[1, 64],
+"inFileDataRange":[1, 1],
 "inFile":"/scratch/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/pwPSD.mat",
 "outFile":"/scratch/08302/tcruz/Accelerated-Network-Analysis/TMPPSDDATA/estPSD.mat",
 "outDir":"/scratch/08302/tcruz/Accelerated-Network-Analysis",
@@ -17,7 +17,7 @@
 "draseParamsjson":"/work/08302/tcruz/DRASE/JSON/draseParams.json",
 "injSig":1,
 "jbTime": 0.7,
-"nNodes": 3,
+"nNodes": 1,
 "nJbsPerNode": 16,
 "qType":"normal",
 "email":"thomas.cruz03@utrgv.edu"
