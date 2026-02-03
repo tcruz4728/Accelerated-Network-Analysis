@@ -74,6 +74,7 @@ jobParams = loadjson(jobParamsFile);
 userUID = 1;
 datad = [];
 shpsCtrl = 1;
+nBatches = 1; % number of matlab -batch lines per launcher job file
 
 %Override the file name if optional input given
 nreqArgs = 2;
@@ -86,6 +87,8 @@ for lpargs = 1:(nargin-nreqArgs)
                 datad = varargin{lpargs};
             case 3
                 shpsCtrl = varargin{lpargs};
+            case 4
+                nBatches = varargin{lpargs};
         end
     end
 end
@@ -118,47 +121,186 @@ for fileCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
 end
 % fidShpsOutFileList = fopen([outdataFilePrfx,'shpsoutFilesList.txt'],'r');
 %% Constuct job file for Launcher
-fidJbFile = fopen([jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfile.txt'],'w');
-disp(['Job File: ',jobParams.jobName,'_jbfile.txt',' file created in ',jobParams.scrtchDir,filesep])
-%Store list of output files in .txt file for post-processing codes
-fidOutFileList = fopen([outdataFilePrfx,'_outFilesList.txt'],'w');
-disp(['Output File list created: ',outdataFilePrfx,'_outFilesList.txt'])
+% fidJbFile = fopen([jobParams.scrtchDir,filesep,jobParams.jobName,'_jbfile.txt'],'w');
+% disp(['Job File: ',jobParams.jobName,'_jbfile.txt',' file created in ',jobParams.scrtchDir,filesep])
+% %Store list of output files in .txt file for post-processing codes
+% fidOutFileList = fopen([outdataFilePrfx,'_outFilesList.txt'],'w');
+% disp(['Output File list created: ',outdataFilePrfx,'_outFilesList.txt'])
+% 
+% nJobs = 1;
+% batchIndex = 1;            % which batch we are on
+% jobCountInBatch = 0;       % how many jobs currently in this batch
+% nJobsTotal = 0;            % overall job counter
+% 
+% % Helper to open a new batch job file and out‑list
+% openNewBatch = @(bIdx) deal( ...
+%     fopen(fullfile(jobParams.scrtchDir, ...
+%            sprintf('%s_batch%03d_jbfile.txt', jobParams.jobName, bIdx)), 'w'), ...
+%     fopen(sprintf('%s_batch%03d_outFilesList.txt', outdataFilePrfx, bIdx), 'w') );
+% 
+% [fidJbFile, fidOutFileList] = openNewBatch(batchIndex);
+% fprintf('Job File: %s_batch%03d_jbfile.txt created in %s', ...
+%     jobParams.jobName, batchIndex, jobParams.scrtchDir);
+% fprintf('Output File list created: %s_batch%03d_outFilesList.txt\n', ...
+%     outdataFilePrfx, batchIndex);
+% 
+% for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
+%     for runType = 1:(1+shpsCtrl)
+%         % If this batch is full, close files and start a new batch
+%         if jobCountInBatch >= batchSize
+%             fclose(fidJbFile);
+%             fclose(fidOutFileList);
+%             batchIndex       = batchIndex + 1;
+%             jobCountInBatch  = 0;
+%             [fidJbFile, fidOutFileList] = openNewBatch(batchIndex);
+%             fprintf('Job File: %s_batch%03d_jbfile.txt created in %s', ...
+%                 jobParams.jobName, batchIndex, jobParams.scrtchDir);
+%             fprintf('Output File list created: %s_batch%03d_outFilesList.txt\n', ...
+%                 outdataFilePrfx, batchIndex);
+%         end
+% 
+%         %  PSO and drase command on input file.
+%         fprintf(fidJbFile,'matlab -batch ');
+%         %path to jsonlab,
+%         fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
+%         %path to DRASE
+%         fprintf(fidJbFile,' addpath ''%s''; ', jobParams.path2drase);
+%         %path to SHAPES, PSO, and project
+%         fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
+%         %Call to matched filtering code
+%         switch runType
+%             case 1 %pwelch run
+%                 fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
+%                     paramsFileList{nCount},dataFileList{nCount});
+%             case 2 %shapes run
+%                 fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
+%                     paramsFileshpsList{nCount},shpsDataFileList{nCount});           
+%         end
+%         jobCountInBatch = jobCountInBatch + 1;
+%         nJobsTotal      = nJobsTotal + 1;
+% 
+%         % Write to this batch's out‑file list
+%         fprintf(fidOutFileList,'%s', dataFileList{nCount});
+%         if runType == 2
+%             fprintf(fidOutFileList,'  %s\n', shpsDataFileList{nCount});
+%         else
+%             fprintf(fidOutFileList,'\n');
+%         end
+%     end
+% end
+% fclose(fidOutFileList);
+% fclose(fidJbFile);
+% %% Slurm file generation
+% genslurm(jobParams,nJobs)
+% end
 
-nJobs = 1;
+%% Job Count
+nJobsTotal = 0;
 for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
     for runType = 1:(1+shpsCtrl)
-        %  PSO and drase command on input file.
-        fprintf(fidJbFile,'matlab -batch ');
-        %path to jsonlab,
-        fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
-        %path to DRASE
-        fprintf(fidJbFile,' addpath ''%s''; ', jobParams.path2drase);
-        %path to SHAPES, PSO, and project
-        fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
-        %Call to matched filtering code
-        switch runType
-            case 1 %pwelch run
-                fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
-                    paramsFileList{nCount},dataFileList{nCount});
-            case 2 %shapes run
-                fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
-                    paramsFileshpsList{nCount},shpsDataFileList{nCount});           
-        end
-        % Count number of jobs
-        nJobs = nJobs + 1;
-    end
-    fprintf(fidOutFileList,'%s',...
-        dataFileList{nCount});
-    if runType == 2
-        fprintf(fidOutFileList,'  %s\n',...
-        shpsDataFileList{nCount});
-    else
-        fprintf(fidOutFileList,'\n');
+        nJobsTotal = nJobsTotal + 1;
     end
 end
-fclose(fidOutFileList);
+jobsPerBatch    = ceil(nJobsTotal / nBatches);
+
+%% Second pass: construct batched job files and output lists
+batchIndex      = 1;
+jobCountInBatch = 0;
+
+batchJobCounts  = [];    % jobs in each batch
+batchNames      = {};    % jobName for each batch
+
+openNewBatch = @(bIdx, baseJobName) deal( ...
+    fopen(fullfile(jobParams.scrtchDir, ...
+          sprintf('%s_batch%03d_jbfile.txt', baseJobName, bIdx)), 'w'), ...
+    fopen(sprintf('%s_batch%03d_outFilesList.txt', outdataFilePrfx, bIdx), 'w'), ...
+    sprintf('%s_batch%03d', baseJobName, bIdx) );
+
+[fidJbFile, fidOutFileList, currentBatchName] = ...
+    openNewBatch(batchIndex, jobParams.jobName);
+
+disp(['Job File: ', currentBatchName, '_jbfile.txt file created in ', ...
+      jobParams.scrtchDir, filesep]);
+disp(['Output File list created: ', outdataFilePrfx, ...
+      sprintf('_batch%03d_outFilesList.txt', batchIndex)]);
+
+% reset total job counter if you still want it
+nJobsTotalCheck = 0;
+
+for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
+
+    for runType = 1:(1+shpsCtrl)
+
+        % If this batch reached its quota, close and start a new batch
+        if jobCountInBatch >= jobsPerBatch
+            fclose(fidJbFile);
+            fclose(fidOutFileList);
+
+            batchJobCounts(end+1) = jobCountInBatch;
+            batchNames{end+1}     = currentBatchName;
+
+            batchIndex      = batchIndex + 1;
+            jobCountInBatch = 0;
+
+            [fidJbFile, fidOutFileList, currentBatchName] = ...
+                openNewBatch(batchIndex, jobParams.jobName);
+
+            disp(['Job File: ', currentBatchName, ...
+                  '_jbfile.txt file created in ', ...
+                  jobParams.scrtchDir, filesep]);
+            disp(['Output File list created: ', outdataFilePrfx, ...
+                  sprintf('_batch%03d_outFilesList.txt', batchIndex)]);
+        end
+
+        % ---- build matlab -batch command (your existing code) ----
+        fprintf(fidJbFile,'matlab -batch ');
+        fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
+        fprintf(fidJbFile,' addpath ''%s''; ', jobParams.path2drase);
+        fprintf(fidJbFile,' setpath(''%s''); ', jobParamsFile);
+
+        switch runType
+            case 1 % pwelch run
+                fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
+                    paramsFileList{nCount}, dataFileList{nCount});
+            case 2 % shapes run
+                fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
+                    paramsFileshpsList{nCount}, shpsDataFileList{nCount});
+        end
+        % ----------------------------------------------------------
+
+        jobCountInBatch = jobCountInBatch + 1;
+        nJobsTotalCheck = nJobsTotalCheck + 1;
+
+        % write to this batch's outFiles list
+        fprintf(fidOutFileList,'%s', dataFileList{nCount});
+        if runType == 2
+            fprintf(fidOutFileList,'  %s\n', shpsDataFileList{nCount});
+        else
+            fprintf(fidOutFileList,'\n');
+        end
+    end
+end
+
+% close the final batch
 fclose(fidJbFile);
-%% Slurm file generation
-% genslurm(jobParams,nJobs,anabasicsstr,1,0.5)
-genslurm(jobParams,nJobs)
+fclose(fidOutFileList);
+
+if jobCountInBatch > 0
+    batchJobCounts(end+1) = jobCountInBatch;
+    batchNames{end+1}     = currentBatchName;
+end
+
+disp(['Total jobs (check): ', num2str(nJobsTotalCheck)]);
+disp(['Requested batches:  ', num2str(nBatches)]);
+disp(['Actual batches:     ', num2str(numel(batchNames))]);
+
+%% Generate one SLURM file per batch
+for b = 1:numel(batchNames)
+    thisName  = batchNames{b};
+    thisNJobs = batchJobCounts(b);
+
+    % genslurm(jobParams, nJobs, jobNameOverride)
+    genslurm(jobParams, thisNJobs, thisName);
+end
+
 end
