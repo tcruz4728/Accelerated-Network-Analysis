@@ -99,4 +99,3 @@ fclose(fidOutFileList);
 %% Slurm file generation
 genslurm(jobParams,nJobs)
 end
-

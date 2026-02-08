@@ -252,7 +252,6 @@ for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
                   sprintf('_batch%03d_outFilesList.txt', batchIndex)]);
         end
 
-        % ---- build matlab -batch command (your existing code) ----
         fprintf(fidJbFile,'matlab -batch ');
         fprintf(fidJbFile,' "addpath ''%s''; ', path2jsonlab);
         fprintf(fidJbFile,' addpath ''%s''; ', jobParams.path2drase);
@@ -266,18 +265,20 @@ for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
                 fprintf(fidJbFile, ' rungwpso(''%s'',''%s'');" \n', ...
                     paramsFileshpsList{nCount}, shpsDataFileList{nCount});
         end
-        % ----------------------------------------------------------
 
         jobCountInBatch = jobCountInBatch + 1;
         nJobsTotalCheck = nJobsTotalCheck + 1;
 
         % write to this batch's outFiles list
-        fprintf(fidOutFileList,'%s', dataFileList{nCount});
+
         if runType == 2
-            fprintf(fidOutFileList,'  %s\n', shpsDataFileList{nCount});
+            shpsList = shpsDataFileList{nCount};
+            % fprintf(fidOutFileList,'  %s\n', shpsDataFileList{nCount});
         else
-            fprintf(fidOutFileList,'\n');
+            % fprintf(fidOutFileList,'\n');
+            shpsList = '';
         end
+        fprintf(fidOutFileList,'%s %s\n', dataFileList{nCount},shpsList);
     end
 end
 
