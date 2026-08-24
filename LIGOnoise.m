@@ -1,4 +1,4 @@
-function [outNoise, PSD,varargout] = LIGOnoise(N, Fs, noise_num, noisefile)
+function [outNoise, PSD,varargout] = LIGOnoise(N, Fs, noise_num, noisefile,varargin)
 %Function to create colored noise using LIGO Design Sensitivities 
 % Design PSD is modified between 15 Hz and 700Hz.
 % Input: N = Total number of samples,
@@ -9,6 +9,14 @@ function [outNoise, PSD,varargout] = LIGOnoise(N, Fs, noise_num, noisefile)
 %         PSD = two-sided PSD vector for positive DFT frequencies
 
 % Raghav Girgaonkar, April 2023
+
+%Optional Input arguments
+freqBnds = [30 700];
+if nargin > 4
+    if ~isempty(varargin{1})
+        freqBnds = varargin{1};
+    end
+end
 
 %Load PSD 
 y = load('iLIGOSensitivity.txt','-ascii');
@@ -39,19 +47,19 @@ fvec = (0:(kNyq-1))*Fs/N;
 interPSD = interp1(y(:,1),y(:,2), fvec);
 
 %% Modifications, change cutoff frequencies as needed 
-minidx = find(fvec<=30, 1, 'last' );
-maxidx = find(fvec<=700, 1, 'last' );
+minidx = find(fvec<=freqBnds(1), 1, 'last' );
+maxidx = find(fvec<=freqBnds(end), 1, 'last' );
 
-Sn30 = interPSD(minidx);
-Sn700 = interPSD(maxidx);
+SnBndStrt = interPSD(minidx);
+SnBndEnd = interPSD(maxidx);
  
-interPSD(1:minidx) = Sn30;
-interPSD(maxidx:end) = Sn700;
+interPSD(1:minidx) = SnBndStrt;
+interPSD(maxidx:end) = SnBndEnd;
 
 PSD = interPSD.^2;
 varargout{1} = fvec;
 %% Make colored Noise
-fltrOrdr = 10000;
+fltrOrdr = 20000;
 
 outNoise_t = statgaussnoisegen(N,[fvec(:),PSD(:)],fltrOrdr,Fs, noise_num, noisefile);
 

@@ -163,7 +163,7 @@ end
 %% PSDs training segment plot
 if pltCtrl == 2 || pltCtrl == 12
     figure;
-    semilogy(outData.freqVec,outData.PSD); axis tight
+    semilogy(outData.freqVec,outData.PSD,'DisplayName','Training PSD'); axis tight
     title('PSD of Training Segment')
     saveas(gcf,[filepaths.figs,'Training_PSD']);
 end
@@ -171,9 +171,13 @@ end
 % input: inFile - training segment PSD from load_mfdata.m
 % output: outFile - shapes estimation of training segment PSD
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.d,fidprog,progCtrl); end
-drase4lines(jobParams,outdataFilePrfx,filepaths.figs);
+[data_est,~,shps_output] = drase4lines(jobParams,outdataFilePrfx,filepaths.figs);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
-
+        
+if pltCtrl == 2 || pltCtrl == 12
+        hold on;
+        plot(outData.freqVec,data_est,'DisplayName','Estimated PSD')
+end
 %% Interpolation - Takes log10 of PSDs, interpolates and inverses the log 
 %input: outData/inFile - data structure from load_mfdata.m
 %output: inFile - appending the interpolated PSD

@@ -36,7 +36,7 @@ dataYwin = tukeywin(size(dataY,2),0.5*sampFreq/(size(dataY,2)));
 dataY = dataY.*dataYwin';
 
 %Whiten data and create transfer function
-[whtndfiltdata, TFtotal]=segdatacond(dataY, interpPSD, sampFreq,...
+[whtndfiltdata, TFtotal] = segdatacond(dataY, interpPSD, sampFreq,...
     [1,32*sampFreq],freqBnd(1,1));
 
 % %Perform signal injection (optional)

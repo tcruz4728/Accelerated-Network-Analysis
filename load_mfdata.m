@@ -35,6 +35,7 @@ endFreq = 700; % High Frequency cutoff, or ending frequency
 %Override default parameters if given
 nreqArgs = 2;
 sigInjChk = [];
+window_time = 4;
 for lpargs = 1:(nargin-nreqArgs)
     if ~isempty(varargin{lpargs})
         switch lpargs
@@ -89,14 +90,14 @@ if ~isempty(sigInjChk)
     disp(['load_mfdata- Injected signal with snr: ', num2str(injSigparams.signal.snr)])
 end
 %% Band-pass filter on unwhitened time series data
-dataYwin = tukeywin(size(dataY,2),4*sampFreq/(size(dataY,2)));
+dataYwin = tukeywin(size(dataY,2),window_time*sampFreq/(size(dataY,2)));
 dataY = dataY.*dataYwin';
 dataY_highpass = highpass(dataY, strtFreq, sampFreq, ImpulseResponse="iir",Steepness=0.95);
 dataY = dataY_highpass;
 
 %% Time series training segment generation
 strtTime = floor(10*sampFreq);
-if  tlen < 60 && tlen > 32
+if  tlen <= 60 && tlen > 32
     endTime = strtTime + floor(32/tIntrvl);
 elseif tlen <= 32
     endTime = strtTime + floor(tlen/(4*tIntrvl));
@@ -106,7 +107,7 @@ end
 tseriestrainSeg = dataY_highpass(strtTime:endTime);
 
 %% Pwelch PSD estimation
-winVec = tukeywin(4*sampFreq);
+winVec = tukeywin(window_time*sampFreq);
 [PSD,freqVec] = pwelch(tseriestrainSeg,winVec,[],[],sampFreq);
 
 PSD = PSD/2; % /2 to convert to 2-sided psd

@@ -14,7 +14,10 @@ switch params.dataGenType
         Nsamples = sigparams.sampFreq*sigparams.datalen;
         data_realizations = zeros(sigparams.nRealizations,Nsamples);
         for lpruns = 1:sigparams.nRealizations
-            [data_realizations(lpruns,:),dsstPSD,dsstfreqVec] = LIGOnoise(Nsamples,sigparams.sampFreq,1,'sample');
+            %Normal 30 and 700 frequency bounds
+            % [data_realizations(lpruns,:),dsstPSD,dsstfreqVec] = LIGOnoise(Nsamples,sigparams.sampFreq,1,'sample');
+            %Specified frequency bounds
+            [data_realizations(lpruns,:),dsstPSD,dsstfreqVec] = LIGOnoise(Nsamples,sigparams.sampFreq,1,'sample',[8 700]);
         end
 end
 tIntrvl = 1/sigparams.sampFreq;
@@ -39,3 +42,10 @@ disp(['dataRealizationgenmat- Saved ',num2str(size(data_realizations,1)),...
     ' as realization_',num2str(sigparams.datalen),...
         's_inj',num2str(sigparams.ta),...
         '_fs',num2str(sigparams.sampFreq),'_n<#>','.mat'])
+
+%% Data Extractions
+strt_time = 0; %0 for 0s
+end_time = 60;
+signalParams_ext = signalParams;
+signalParams_ext.signal.T_sig_len = end_time - strt_time;
+injSigparams_ext = gwpsoparams(psoParams,signalParams_ext,0);

@@ -8,13 +8,18 @@ path2jsonlab = 'C:\Users\tcruz\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collecti
 addpath(path2jsonlab)
 addpath("References\")
 %Job File 
-% jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\multi_shps_PC_Job_params.json';
-jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\gwtsnr_premf_PC_Job_params.json';
+% jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\gwtsnr_premf_PC_Job_params.json';
+% jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\sim_premf_PC_Job_params.json';
+jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\H1_premf_PC_Job_params.json';
+
 %Load job parameters
 jobParams = loadjson(jobParamsFile);
 % for filecount = 1:jobParams.inFileDataRange(end)
+if ~isempty(jobParams.inFileDataRange)
     jobParams.inFileData = [jobParams.inFileDataPrFx,num2str(jobParams.inFileDataRange(1)),'.mat'];
-% end
+else
+    jobParams.inFileData = jobParams.inFileDataPrFx;
+end
 %% Runs necessary prep-functions for rungwpso
 [paramsFile,outdataFilePrfx,filepaths,progressFile] = ana_basics(jobParams,userUID,datad,[],progCtrl,12);
 fidprog = fopen(progressFile,'a');
@@ -36,6 +41,6 @@ rungwpso(paramsFileshps,shpsDataFile) %shapes estimate
     progstatus(proglines.p,fidprog,progCtrl)
 combFileName = comb_anashpsjb(path2jsonlab,jobParams,userUID);
 close all
-postprocessing(combFileName,filepaths,jobParams.injSig);
+postprocessing(combFileName,filepaths.end,jobParams.injSig);
     progstatus(proglines.nd,fidprog,progCtrl)
 fclose(fidprog);

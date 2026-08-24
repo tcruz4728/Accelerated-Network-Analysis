@@ -35,6 +35,8 @@ whtndfftfiltdata = fftfiltdata.*TFtotal;
 
 whtndfiltdata = ifft(whtndfftfiltdata)/sqrt(sampFreq);
 
+% fftdataYbyPSD = fft(whtndfiltdata).*TFtotal.*params.A;
+
 %Divide by variance of whitened strain so that final whitened vector has
 %unit strain
 % tstart = tidxs(1);
