@@ -98,18 +98,18 @@ end
 addpath(genpath(jobParams.path2drase));
 
 % Defining File Paths/Names and Folder Creation
-[outDir,filepaths] = dpfc(jobParams,userUID,datad);
+[filepaths] = dpfc(jobParams,userUID,datad);
 varargout{1} = filepaths;
-paramsFile = [outDir,'params']; %rungwpso params file
+paramsFile = [filepaths.intermediate,'params']; %rungwpso params file
 paramsFileshps = [paramsFile,'shps']; %rungwpso params file for shapes data
 
 %Project Parameters
-psoParams = loadjson(jobParams.psoParamsjson); %matched filtering PSO params
-signalParams = loadjson(jobParams.signalParamsjson); %signal injection params
+psoParams = loadjson(jobParams.psoParamsfile); %matched filtering PSO params
+signalParams = loadjson(jobParams.signalParamsfile); %signal injection params
 
 %File Prefix Generation - Names files with project-specific parameters
 filetagstr = filetagana(psoParams,signalParams); 
-outdataFilePrfx = [outDir,jobParams.jobName,'_',filetagstr];
+outdataFilePrfx = [filepaths.intermediate,jobParams.jobName,'_',filetagstr];
 
 % Quick stop for partial runs, namely for setting file naming conventions
 % and creates dated folders.
@@ -119,7 +119,7 @@ end
 
 %% Progress Text file - Monitor code progress and completion (optional)
 if ~isempty(progCtrl) && progCtrl == 1
-    progressFile = [outDir,'progress.txt'];
+    progressFile = [filepaths.tables,'progress.txt'];
     varargout{2} = progressFile;
     fidprog = fopen(progressFile,'a');
     disp(['ana_basics- Progress File created: ',progressFile])
@@ -157,7 +157,7 @@ if pltCtrl == 1 || pltCtrl == 12
     S = abs(S);
     imagesc(T,F,log10(S)); axis xy; %Checking spectrogram image for glitches or high noise
     title('Training Segment Spectrogram')
-    saveas(gcf,[filepaths.figs,'Training_Spectrogram']);
+    saveas(gcf,[filepaths.figures,'Training_Spectrogram']);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
 end
 %% PSDs training segment plot
@@ -165,18 +165,18 @@ if pltCtrl == 2 || pltCtrl == 12
     figure;
     semilogy(outData.freqVec,outData.PSD,'DisplayName','Training PSD'); axis tight
     title('PSD of Training Segment')
-    saveas(gcf,[filepaths.figs,'Training_PSD']);
+    saveas(gcf,[filepaths.figures,'Training_PSD']);
 end
 %% SHAPES PSD estimate - takes pwelch linear PSD and returns in same form
 % input: inFile - training segment PSD from load_mfdata.m
 % output: outFile - shapes estimation of training segment PSD
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.d,fidprog,progCtrl); end
-[data_est,~,shps_output] = drase4lines(jobParams,outdataFilePrfx,filepaths.figs);
+[results] = drase4lines(jobParams,filepaths);
         if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
         
 if pltCtrl == 2 || pltCtrl == 12
         hold on;
-        plot(outData.freqVec,data_est,'DisplayName','Estimated PSD')
+        plot(outData.freqVec,results.estimate,'DisplayName','Estimated PSD')
 end
 %% Interpolation - Takes log10 of PSDs, interpolates and inverses the log 
 %input: outData/inFile - data structure from load_mfdata.m

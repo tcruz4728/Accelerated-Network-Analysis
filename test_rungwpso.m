@@ -41,6 +41,6 @@ rungwpso(paramsFileshps,shpsDataFile) %shapes estimate
     progstatus(proglines.p,fidprog,progCtrl)
 combFileName = comb_anashpsjb(path2jsonlab,jobParams,userUID);
 close all
-postprocessing(combFileName,filepaths.end,jobParams.injSig);
+postprocessing(combFileName,filepaths,jobParams.injSig);
     progstatus(proglines.nd,fidprog,progCtrl)
 fclose(fidprog);
