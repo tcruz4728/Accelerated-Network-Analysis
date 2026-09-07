@@ -1,6 +1,9 @@
-params = loadjson(['JSON',filesep,'realizations.json']);
-psoParams = loadjson(['JSON',filesep,'pso.json']);
-signalParams = loadjson(['JSON',filesep,'signal.json']);
+function dataRealizationgenmat(path2configs)
+% path2configs = fullfile('C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\configs\');
+
+params = loadjson(fullfile(path2configs,'JSON','realizations.json'));
+psoParams = loadjson(fullfile(path2configs,'JSON','pso.json'));
+signalParams = loadjson(fullfile(path2configs,'JSON','signal.json'));
 %% Data Load
 switch params.dataGenType
     case 1 %Data Loading from externally generated files
@@ -43,9 +46,10 @@ disp(['dataRealizationgenmat- Saved ',num2str(size(data_realizations,1)),...
         's_inj',num2str(sigparams.ta),...
         '_fs',num2str(sigparams.sampFreq),'_n<#>','.mat'])
 
-%% Data Extractions
-strt_time = 0; %0 for 0s
-end_time = 60;
-signalParams_ext = signalParams;
-signalParams_ext.signal.T_sig_len = end_time - strt_time;
-injSigparams_ext = gwpsoparams(psoParams,signalParams_ext,0);
+% %% Data Extractions
+% strt_time = 0; %0 for 0s
+% end_time = 60;
+% signalParams_ext = signalParams;
+% signalParams_ext.signal.T_sig_len = end_time - strt_time;
+% injSigparams_ext = gwpsoparams(psoParams,signalParams_ext,0);
+end

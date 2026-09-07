@@ -1,16 +1,17 @@
 % rungwpso test script
 %Set UID for particular run or to overwrite a previous run
 userUID = input("Type UID value: ");
-datad = input("Date of Data (leave empty for current): ");
 %Writes a progress file 
 progCtrl = input("For a progress file, type 1: ");
+if isempty(progCtrl)
+    progCtrl = false;
+end
 path2jsonlab = 'C:\Users\tcruz\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\JSONLab_ a toolbox to encode_decode JSON files\jsonlab-2.0';
 addpath(path2jsonlab)
-addpath("References\")
 %Job File 
-% jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\gwtsnr_premf_PC_Job_params.json';
+jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\configs\JSON\gwtsnr_premf_PC_Job_params.json';
 % jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\sim_premf_PC_Job_params.json';
-jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\JSON\H1_premf_PC_Job_params.json';
+% jobParamsFile = 'C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\configs\JSON\gwosc_split_test_Job_params.json';
 
 %Load job parameters
 jobParams = loadjson(jobParamsFile);
@@ -21,7 +22,10 @@ else
     jobParams.inFileData = jobParams.inFileDataPrFx;
 end
 %% Runs necessary prep-functions for rungwpso
-[paramsFile,outdataFilePrfx,filepaths,progressFile] = ana_basics(jobParams,userUID,datad,[],progCtrl,12);
+addpath(genpath(fullfile('C:\Users\tcruz\OneDrive\Onedrive_Documents\GitHub\Accelerated-Network-Analysis\','src/')))
+[paramsFile,outdataFilePrfx,filepaths,progressFile] = ana_basics(jobParams,...
+    "RunID",userUID,...
+    "ProgressMonitoring",progCtrl,"UseLegacyFolders",{true,[]});
 fidprog = fopen(progressFile,'a');
 proglines = struct('nd','done.',...
     'pr','Pwelch GW PSO Run...',...

@@ -1,0 +1,12 @@
+{
+"psdfile": "pwPSD.mat",
+"psdfile2": "estPSD.mat", 
+"noisefile": "50_noise_realizations.mat",
+"datafile": "test1_512s_inj138_fs4096.mat",
+"output_struct_location": "/scratch/09197/raghav/PSD-Estimation/outStruct_tau.mat",
+"bestlocplot": "/scratch/09197/raghav/PSD-Estimation/bestloc_tau.png",
+"bestfitplot": "/scratch/09197/raghav/PSD-Estimation/bestfitness_tau.png",
+"psoresultplot": "/scratch/09197/raghav/PSD-Estimation/psoresults_tau.png",
+"fitnessvaluesfile": "/scratch/09197/raghav/PSD-Estimation/fitness_values.txt",
+"fitvalimgfile": "1-1.mat"
+}

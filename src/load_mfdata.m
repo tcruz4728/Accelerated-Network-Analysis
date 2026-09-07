@@ -1,4 +1,4 @@
-function varargout = load_mfdata(inFileData,inFilePSD,varargin)
+function varargout = load_mfdata(inFileData,outFileName,varargin)
 % Function to load LIGO time series for use with matched filtering.
 % LOAD_MTCHDFLTRDATA(D,P)
 % Loads data file D which can either be a .hdf5 or a .mat file. Applies a
@@ -97,12 +97,12 @@ dataY = dataY_highpass;
 
 %% Time series training segment generation
 strtTime = floor(10*sampFreq);
-if  tlen <= 60 && tlen > 32
+if  tlen <= 64 && tlen > 32
     endTime = strtTime + floor(32/tIntrvl);
 elseif tlen <= 32
     endTime = strtTime + floor(tlen/(4*tIntrvl));
 else
-    endTime = strtTime + floor(60/tIntrvl);
+    endTime = strtTime + floor(64/tIntrvl);
 end
 tseriestrainSeg = dataY_highpass(strtTime:endTime);
 
@@ -144,14 +144,14 @@ end
 
 varargout{1} = outData;
 
-if ~isempty(inFilePSD)
+if ~isempty(outFileName)
     whos('PSD','freqVec','dataY','sampFreq') % debugging
-    save(inFilePSD,'PSD','freqVec','dataY','sampFreq',...
+    save(outFileName,'PSD','freqVec','dataY','sampFreq',...
         'freqBnd','tlen', "-v7")
     if ~isempty(sigInjChk)
-        save(inFilePSD,'injSigparams',"-append")
+        save(outFileName,'injSigparams',"-append")
     end
-    disp(['load_mfdata- pwelch PSD and time series data saved to: ',inFilePSD])
+    disp(['load_mfdata- pwelch PSD and time series data saved to: ',outFileName])
 end
 
 

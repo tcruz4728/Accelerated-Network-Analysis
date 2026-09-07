@@ -1,0 +1,14 @@
+{
+    "jobName":"pc_test_rungwpso_test",
+    "dataRoot":"C:/Users/tcruz/OneDrive/Onedrive_Documents/GitHub/Accelerated-Network-Analysis_Data",
+    "environment": "C:/Users/tcruz/OneDrive/Onedrive_Documents/GitHub/Accelerated-Network-Analysis/configs/environment.local.json",
+    "inFile":"C:/Users/tcruz/OneDrive/Onedrive_Documents/GitHub/Data/Clipped_LIGO/L-L1_LOSC_C00_4_V1-1187006834-1920ts-60s.mat",
+    "inFileFormat":"singleton",
+    "configs":{
+        "psoParamsfile":"configs/JSON/pso.json",
+        "signalParamsfile":"configs/JSON/signal.json",
+        "genDataParamsfile":"C:/Users/tcruz/OneDrive/Onedrive_Documents/Github/DRASE/configs/JSON/genDataParams.json",
+        "draseParamsfile":"C:/Users/tcruz/OneDrive/Onedrive_Documents/Github/DRASE/configs/JSON/draseParams.json"
+    },
+    "injSig":""
+}

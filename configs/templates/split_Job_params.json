@@ -1,0 +1,14 @@
+{
+    "jobName":"pc_gwosc_split_test",
+    "dataRoot":"C:/Users/tcruz/OneDrive/Onedrive_Documents/GitHub/Accelerated-Network-Analysis_Data",
+    "environment": "C:/Users/tcruz/OneDrive/Onedrive_Documents/GitHub/Accelerated-Network-Analysis/configs/environment.local.json",
+    "inFile":"C:/Users/tcruz/OneDrive/Onedrive_Documents/GitHub/Data/Spliced_LIGO/manifests/H1_GPS1187006834_dur064.json",
+    "inFileFormat":"manifest",
+    "configs":{
+        "psoParamsfile":"configs/JSON/pso.json",
+        "signalParamsfile":"configs/JSON/signal.json",
+        "genDataParamsfile":"C:/Users/tcruz/OneDrive/Onedrive_Documents/Github/DRASE/configs/JSON/genDataParams.json",
+        "draseParamsfile":"C:/Users/tcruz/OneDrive/Onedrive_Documents/Github/DRASE/configs/JSON/draseParams.json"
+    },
+    "injSig":""
+}

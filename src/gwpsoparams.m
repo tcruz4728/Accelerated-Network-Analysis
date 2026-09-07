@@ -3,7 +3,7 @@ function varargout = gwpsoparams(psoParams,signalParams,varargin)
 % params.mat file.
 % P- PSO parameter structure containing the following fields
 %   {
-%   "type": "<Parameter space controller, =1 for mass space, =2 for tau space>",
+%   "type": "<Parameter space controller, either 'mass' space or 'tau' space>",
 %   "maxSteps": <Number of PSO iterations used in rungwpso's pso call>,
 %   "nRuns": <Number of computing cores used in rungwpso's pso call>
 %       }
@@ -69,11 +69,12 @@ T_sig_len = signalParams.signal.T_sig_len; %Length of signal in seconds
 sampFreq = signalParams.sampling_freq; %Sampling Frequency, samples per second
 nSamples = T_sig_len*sampFreq; %Number of samples
 
-if psoParams.type == 2 % Search range of phase coefficients
+switch psoParams.type
+    case 'tau'% Search range of phase coefficients
     rmin = [signalParams.rmin_tau(1), signalParams.rmin_tau(2)];
     rmax = [signalParams.rmax_tau(1), signalParams.rmax_tau(2)];
         disp("gwpsoparams- Tau Space PSO");
-else
+    case 'mass'
     rmin = [signalParams.rmin(1), signalParams.rmin(2)];
     rmax = [signalParams.rmax(1), signalParams.rmax(2)];
         disp("gwpsoparams- Mass Space PSO");
@@ -89,7 +90,8 @@ cg = c^3/G;
 fmin = signalParams.freq(1); %Min cutoff Frequency 
 m1 = signalParams.masses(1); %Mass of object 1 from signal in solar masses
 m2 = signalParams.masses(2); %Mass of object 2 from signal in solar masses
-if psoParams.type == 2
+switch psoParams.type
+    case 'tau'
     %Mass conversion to kg
     m1 = m1*Msolar;
     m2 = m2*Msolar;

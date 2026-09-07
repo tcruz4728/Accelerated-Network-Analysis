@@ -1,4 +1,4 @@
-function [paramsFile,outdataFilePrfx,varargout] = ana_basics(jobParams,userUID,varargin)
+function [paramsFile,outdataFilePrfx,varargout] = ana_basics(jobParams,opts)
 % [P,Y] = ANA_BASICS(J,U)
 % This function uses the job parameters defined in J and the UID U to
 % produce the parameter files P and defines the output file prefix which
@@ -67,58 +67,50 @@ function [paramsFile,outdataFilePrfx,varargout] = ana_basics(jobParams,userUID,v
 %
 % See also GWPSOPARAMS, FILETAGANA, DRASE\MKDIRUID, DRASE\DRASE.
 
+%%
+arguments
+    jobParams           {mustBeNonempty}
+    opts.UseLegacyFolders   (2,1) cell = {false,struct()}
+    opts.RunID              (1,1) string  = ""
+    opts.EarlyReturn        (2,1) logical = [false,false]
+    opts.ProgressMonitoring (1,1) logical = false
+    opts.IncludePlotting    (2,1) logical = [false,false]
+end
 %% jobParams datatype check - checks for whether jobParams is a structure, else assumes a file
 if ~isstruct(jobParams)
     jobParams = loadjson(jobParams);
 end
 
-%% Optional Arguments
-nreqArgin = 2;
-datad = [];
-anabreak = [];
-progCtrl = [];
-pltCtrl = 0;
-for largs = 1:(nargin-nreqArgin)
-    if ~isempty(varargin{largs})
-        switch largs
-            case 1
-                datad = varargin{largs};
-            case 2
-                anabreak = varargin{largs};
-            case 3
-                progCtrl = varargin{largs};
-            case 4
-                pltCtrl = varargin{largs};
-        end
-    end
-end
-
 %% Initial Setup: Parameters - job settings
 %DRASE added to pathing for dpfc function
-addpath(genpath(jobParams.path2drase));
+% addpath(genpath(jobParams.path2drase));
 
 % Defining File Paths/Names and Folder Creation
-[filepaths] = dpfc(jobParams,userUID,datad);
+if opts.UseLegacyFolders{1}
+    filepaths = dpfc(jobParams,opts.RunID);
+else
+    filepaths = opts.UseLegacyFolders{2};
+end
 varargout{1} = filepaths;
 paramsFile = [filepaths.intermediate,'params']; %rungwpso params file
 paramsFileshps = [paramsFile,'shps']; %rungwpso params file for shapes data
 
 %Project Parameters
-psoParams = loadjson(jobParams.psoParamsfile); %matched filtering PSO params
-signalParams = loadjson(jobParams.signalParamsfile); %signal injection params
+psoParams = loadjson(jobParams.configs.psoParamsfile); %matched filtering PSO params
+signalParams = loadjson(jobParams.configs.signalParamsfile); %signal injection params
 
 %File Prefix Generation - Names files with project-specific parameters
 filetagstr = filetagana(psoParams,signalParams); 
-outdataFilePrfx = [filepaths.intermediate,jobParams.jobName,'_',filetagstr];
+outdataFilePrfx = fullfile(filepaths.intermediate,filetagstr);
 
 % Quick stop for partial runs, namely for setting file naming conventions
 % and creates dated folders.
-if ~isempty(anabreak) && anabreak == 1
+if opts.EarlyReturn(1)
     return
 end
 
 %% Progress Text file - Monitor code progress and completion (optional)
-if ~isempty(progCtrl) && progCtrl == 1
+if opts.ProgressMonitoring
     progressFile = [filepaths.tables,'progress.txt'];
     varargout{2} = progressFile;
     fidprog = fopen(progressFile,'a');
@@ -131,26 +123,26 @@ if ~isempty(progCtrl) && progCtrl == 1
     'w','Data Conditioning on Welch...',...
     's','Data Conditioning on SHAPES...',...
     'g','Glitch Check...');
-    progstatus(proglines.t,fidprog,progCtrl)
+    progstatus(proglines.t,fidprog,opts.ProgressMonitoring)
 end
 %% GW Parameter settings - combines relevant settings and performs necessary 
 % computations for rungwpso. Does not require time-series or PSD data
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.c,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.c,fidprog,opts.ProgressMonitoring); end
 gwpsoparams(psoParams,signalParams,paramsFile);
 copyfile([paramsFile,'.mat'],[paramsFileshps,'.mat']); %identical but separate parameter settings
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
-if ~isempty(anabreak) && anabreak == 2
+        if opts.ProgressMonitoring, progstatus(proglines.nd,fidprog,opts.ProgressMonitoring); end
+if opts.EarlyReturn(2)
     return
 end
 %% Data Load - loads time-series performs bandpass, computes training segment PSD
 % input: inFileData - time series data from LIGO or simulations
 % output: inFile - training segment PSD
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.l,fidprog,progCtrl); end
-outData = load_mfdata(jobParams.inFileData,jobParams.inFile,jobParams.injSig);
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.l,fidprog,opts.ProgressMonitoring); end
+outData = load_mfdata(jobParams.inFile,filepaths.intermediate,jobParams.injSig);
+        if opts.ProgressMonitoring, progstatus(proglines.nd,fidprog,opts.ProgressMonitoring); end
 %% Glitch Checking - Visual clarification with spectrogram
-if pltCtrl == 1 || pltCtrl == 12
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.g,fidprog,progCtrl); end
+if opts.IncludePlotting(1)
+        if opts.ProgressMonitoring, progstatus(proglines.g,fidprog,opts.ProgressMonitoring); end
     figure;
     plot(outData.dataY)
     [S,F,T] = spectrogram(outData.tseriestrainSeg,8192,8000,[],outData.sampFreq);
@@ -158,10 +150,10 @@ if pltCtrl == 1 || pltCtrl == 12
     imagesc(T,F,log10(S)); axis xy; %Checking spectrogram image for glitches or high noise
     title('Training Segment Spectrogram')
     saveas(gcf,[filepaths.figures,'Training_Spectrogram']);
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.nd,fidprog,opts.ProgressMonitoring); end
 end
 %% PSDs training segment plot
-if pltCtrl == 2 || pltCtrl == 12
+if opts.IncludePlotting(2)
     figure;
     semilogy(outData.freqVec,outData.PSD,'DisplayName','Training PSD'); axis tight
     title('PSD of Training Segment')
@@ -170,11 +162,11 @@ end
 %% SHAPES PSD estimate - takes pwelch linear PSD and returns in same form
 % input: inFile - training segment PSD from load_mfdata.m
 % output: outFile - shapes estimation of training segment PSD
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.d,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.d,fidprog,opts.ProgressMonitoring); end
 [results] = drase4lines(jobParams,filepaths);
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.nd,fidprog,opts.ProgressMonitoring); end
         
-if pltCtrl == 2 || pltCtrl == 12
+if opts.IncludePlotting(2)
         hold on;
         plot(outData.freqVec,results.estimate,'DisplayName','Estimated PSD')
 end
@@ -191,17 +183,17 @@ createPSD(PSD,outData.freqVec,outData.tlen,outData.sampFreq,jobParams.outFile);
 %% Condition Data and Compute FFTs
 %inputs: inFile - interpolated PSD highpassed time series
 %output: paramsFile - updated from gwpsoparams with fft
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.w,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.w,fidprog,opts.ProgressMonitoring); end
 cond_mfdata(jobParams.inFile,paramsFile);
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.nd,fidprog,opts.ProgressMonitoring); end
         
 %inputs: outFile - interpolated shps PSD & inFile - highpassed time series
 %output: paramsFileshps - updated from gwpsoparams with fft
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.s,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.s,fidprog,opts.ProgressMonitoring); end
 cond_mfdata(jobParams.outFile,paramsFileshps);
-        if ~isempty(progCtrl) && progCtrl == 1, progstatus(proglines.nd,fidprog,progCtrl); end
+        if opts.ProgressMonitoring, progstatus(proglines.nd,fidprog,opts.ProgressMonitoring); end
 
 %Display file names
 disp(['ana_basics- Parameter files saved: ',paramsFile, '.mat and ',paramsFileshps,'.mat'])
-        if ~isempty(progCtrl) && progCtrl == 1, fclose(fidprog); end
+        if opts.ProgressMonitoring, fclose(fidprog); end
 end
