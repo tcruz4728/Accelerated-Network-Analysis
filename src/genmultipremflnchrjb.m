@@ -88,7 +88,7 @@ for lpargs = 1:(nargin-nreqArgs)
 end
 
 %% File Naming Convention
-[paramsFile,outdataFilePrfx,filepaths] = ana_basics(jobParams,userUID,[],2);
+[paramsFile,outdataFilePrfx,filepaths] = ana_basics(jobParams,"RunID",userUID,"EarlyReturn",[false,true]);
 
 [interFilePath,interFileName,~] = fileparts(jobParams.inFile);
 [outFilePath,outFileName,~] = fileparts(jobParams.outFile);
@@ -160,8 +160,8 @@ for nCount = jobParams.inFileDataRange(1):jobParams.inFileDataRange(2)
     %Repeat process for SHAPES on PSD
     if shpsCtrl == 1
         %SHAPES call
-        fprintf(fidJbFile,' drase4lines(''%s'',''%s'',''%s'',''%s'',''%s''); ',...
-            jobParamsFile,[],filepaths.end,...
+        fprintf(fidJbFile,' drase4lines(''%s'',''%s'',"InputFile",''%s'',"OutputDirectory",''%s''); ',...
+            jobParamsFile,filepaths,...
             interFileNameList{nCount},outFileNameList{nCount});
         fprintf(fidJbFile,' createPSD(''%s''); ',... shapes
             outFileNameList{nCount});
